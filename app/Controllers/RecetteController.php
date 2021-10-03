@@ -20,13 +20,6 @@ class RecetteController extends BaseController
 
         $db = \Config\Database::connect("default");
 
-		// $query = $db->query("SELECT p.id as pompe_id, p.nom as p_nom,pr.nom as pr_nom,pr.prix as pr_prix,pr.id as pr_ids, IFNULL(v.compteur_initial,0) as compteur_initial, IFNULL(max(v.compteur_final),0) as compteur_final,
-        //                         IFNULL((compteur_final - v.compteur_initial),0) as sortie, IFNULL((v.compteur_final - v.compteur_initial) * pr.prix,0) as ca
-        //                         FROM volucompteurs v 
-        //                         RIGHT JOIN pompes p ON p.id=v.pompe_id 
-        //                         INNER join reservoirs r on p.reservoir_id = r.id 
-        //                         INNER join produits pr on r.produit_id = pr.id
-        //                         GROUP BY p.id;");
 		$query = $db->query("SELECT p.id as pompe_ids, p.nom as p_nom,pr.nom as pr_nom,pr.prix as pr_prix,pr.id as pr_ids, IFNULL(v.compteur_initial,0) as compteur_initial, IFNULL((v.compteur_final),0) as compteur_final ,v.id, v.pompe_id,
                             IFNULL((compteur_final - v.compteur_initial),0) as sortie, IFNULL((v.compteur_final - v.compteur_initial) * pr.prix,0) as ca
                             FROM volucompteurs v 
@@ -65,130 +58,130 @@ class RecetteController extends BaseController
 
     public function add_recette(){
 
-
         $recette = new Recette();
-        $data = array(
-            'responsable_id' => user_id(),
-            'recette_date' => date_format(date_create($this->request->getPost('recette_date')),"Y-m-d"),
-        );
-        $recette->save($data);
+        $recettes = $recette->where('recette_date', date_format(date_create($this->request->getPost('recette_date')),"Y-m-d"))->findAll();
 
+        if(!is_null($recettes)) {
+            $data = array(
+                'responsable_id' => user_id(),
+                'recette_date' => date_format(date_create($this->request->getPost('recette_date')),"Y-m-d"),
+            );
+            $recette->save($data);
 
-
-        // echo(date_format(date_create($this->request->getPost('recette_date')),"Y-m-d"));
-        // echo($recette->insertID);
-
-
-
-
-        $paiement = new Paiement();
-        if(!is_null($this->request->getPost('p_client_id'))){
-            for($i=0; $i<count($this->request->getPost('p_client_id')); $i++){
-                $data = array(
-                    'recette_id' => $recette->insertID,
-                    'client_id' => $this->request->getPost('p_client_id')[$i],
-                    'reference' => $this->request->getPost('p_reference')[$i],
-                    'type_paiement' => $this->request->getPost('p_type_paiement')[$i],
-                    'montant' => $this->request->getPost('p_montant')[$i],
-                    'commission' => $this->request->getPost('p_commission')[$i],
-                    'montant_restant' => $this->request->getPost('p_montant')[$i] - $this->request->getPost('p_commission')[$i], 
-                    // 'quantite' => $this->request->getPost('quantite') 
-                );
-                // $paiement->save($data);
+            $paiement = new Paiement();
+            if(!is_null($this->request->getPost('p_client_id'))){
+                for($i=0; $i<count($this->request->getPost('p_client_id')); $i++){
+                    $data = array(
+                        'recette_id' => $recette->insertID,
+                        'client_id' => $this->request->getPost('p_client_id')[$i],
+                        'reference' => $this->request->getPost('p_reference')[$i],
+                        'type_paiement' => $this->request->getPost('p_type_paiement')[$i],
+                        'montant' => $this->request->getPost('p_montant')[$i],
+                        'commission' => $this->request->getPost('p_commission')[$i],
+                        'montant_restant' => $this->request->getPost('p_montant')[$i] - $this->request->getPost('p_commission')[$i], 
+                        // 'quantite' => $this->request->getPost('quantite') 
+                    );
+                    $paiement->save($data);
+                }
             }
-        }
-        $volucompteur = new VoluCompteur();
-        if(!is_null($this->request->getPost('pompe_ids'))){
-            for($i=0; $i<count($this->request->getPost('pompe_ids')); $i++){
-                $data = array(
-                    'recette_id' => $recette->insertID,
-                    'pompe_id' => $this->request->getPost('pompe_ids')[$i],
-                    'product_id' => $this->request->getPost('pr_ids')[$i],
-                    'compteur_initial' => $this->request->getPost('compteur_initial')[$i],
-                    'compteur_final' => $this->request->getPost('compteur_final')[$i],
-                    'prix_unitaire' => $this->request->getPost('prix')[$i],
-                );
-                // $volucompteur->save($data);
+            $volucompteur = new VoluCompteur();
+            if(!is_null($this->request->getPost('pompe_ids'))){
+                for($i=0; $i<count($this->request->getPost('pompe_ids')); $i++){
+                    $data = array(
+                        'recette_id' => $recette->insertID,
+                        'pompe_id' => $this->request->getPost('pompe_ids')[$i],
+                        'product_id' => $this->request->getPost('pr_ids')[$i],
+                        'compteur_initial' => $this->request->getPost('compteur_initial')[$i],
+                        'compteur_final' => $this->request->getPost('compteur_final')[$i],
+                        'prix_unitaire' => $this->request->getPost('prix')[$i],
+                    );
+                    $volucompteur->save($data);
+                }
             }
-        }
-        $stock = new Stock();
-        if(!is_null($this->request->getPost('pompe_ids'))){
-            for($i=0; $i<count($this->request->getPost('pompe_ids')); $i++){
-                $data = array(
-                    'recette_id' => $recette->insertID,
-                    'sortie' => $this->request->getPost('sortie')[$i],
-                    'entree' => $this->request->getPost('entree')[$i],
-                    'stock_initial' => $this->request->getPost('stock_initial')[$i],
-                    'stock_comptable' => $this->request->getPost('stock_initial')[$i] - $this->request->getPost('sortie')[$i] + $this->request->getPost('entree')[$i],
-                    'stock_physique' => $this->request->getPost('physique')[$i],
-                    'manquant_excedent' => $this->request->getPost('physique')[$i] - ($this->request->getPost('stock_initial')[$i] - $this->request->getPost('sortie')[$i] + $this->request->getPost('entree')[$i]),
-                    'reservoir_id' => $this->request->getPost('reservoir_id')[$i],
-                    'produit_id' => $this->request->getPost('prix')[$i],
-                );
-                // $stock->save($data);
+            $stock = new Stock();
+            if(!is_null($this->request->getPost('pompe_ids'))){
+                for($i=0; $i<count($this->request->getPost('pompe_ids')); $i++){
+                    $data = array(
+                        'recette_id' => $recette->insertID,
+                        'sortie' => $this->request->getPost('sortie')[$i],
+                        'entree' => $this->request->getPost('entree')[$i],
+                        'stock_initial' => $this->request->getPost('stock_initial')[$i],
+                        'stock_comptable' => $this->request->getPost('stock_initial')[$i] - $this->request->getPost('sortie')[$i] + $this->request->getPost('entree')[$i],
+                        'stock_physique' => $this->request->getPost('physique')[$i],
+                        'manquant_excedent' => $this->request->getPost('physique')[$i] - ($this->request->getPost('stock_initial')[$i] - $this->request->getPost('sortie')[$i] + $this->request->getPost('entree')[$i]),
+                        'reservoir_id' => $this->request->getPost('reservoir_id')[$i],
+                        'produit_id' => $this->request->getPost('prix')[$i],
+                    );
+                    $stock->save($data);
+                }
             }
-        }
-        $credit = new Creditclient();
-        $client = new Client();
-        if(!is_null($this->request->getPost('c_client_id1'))){
-            for($i=0; $i<count($this->request->getPost('c_client_id1')); $i++){
-                $data = array(
-                    'recette_id' => $recette->insertID,
-                    'client_id' => $this->request->getPost('c_client_id1')[$i],
-                    'produit_id' => $this->request->getPost('select_produit_credit1')[$i],
-                    'reference' => $this->request->getPost('c_reference1')[$i],
-                    'qt' => $this->request->getPost('c_quantite1')[$i],
-                    'montant' => $this->request->getPost('c_montant1')[$i],
-                    // 'quantite' => $this->request->getPost('quantite') 
-                );
-                // $credit->save($data);
-                $data = array(
-                    'id' => $this->request->getPost('c_client_id1')[$i],
-                    'solde' => $this->request->getPost('c_solde1')[$i],
-                    'reliquat' => $this->request->getPost('c_reliquat1')[$i],
-                );
-                // $client->save($data);
+            $credit = new Creditclient();
+            $client = new Client();
+            if(!is_null($this->request->getPost('c_client_id1'))){
+                for($i=0; $i<count($this->request->getPost('c_client_id1')); $i++){
+                    $data = array(
+                        'recette_id' => $recette->insertID,
+                        'client_id' => $this->request->getPost('c_client_id1')[$i],
+                        'produit_id' => $this->request->getPost('select_produit_credit1')[$i],
+                        'reference' => $this->request->getPost('c_reference1')[$i],
+                        'qt' => $this->request->getPost('c_quantite1')[$i],
+                        'montant' => $this->request->getPost('c_montant1')[$i],
+                        // 'quantite' => $this->request->getPost('quantite') 
+                    );
+                    $credit->save($data);
+                    $data = array(
+                        'id' => $this->request->getPost('c_client_id1')[$i],
+                        'solde' => $this->request->getPost('c_solde1')[$i],
+                        'reliquat' => $this->request->getPost('c_reliquat1')[$i],
+                    );
+                    $client->save($data);
+                }
             }
-        }
-        $v_s = new Venteservice;
-        if(!is_null($this->request->getPost('select_produit_v_s1'))){
-            for($i=0; $i<count($this->request->getPost('select_produit_v_s1')); $i++){
-                $data = array(
-                    'recette_id' => $recette->insertID,
-                    'produit_id' => $this->request->getPost('select_produit_v_s1')[$i],
-                    'qt' => $this->request->getPost('qte_v_s1')[$i],
-                    'type_paiement' => $this->request->getPost('type_paiement_v_s1')[$i],
-                    'montant' => $this->request->getPost('total_v_s')[$i],
-                );
-                // $v_s->save($data);
+            $v_s = new Venteservice;
+            if(!is_null($this->request->getPost('select_produit_v_s1'))){
+                for($i=0; $i<count($this->request->getPost('select_produit_v_s1')); $i++){
+                    $data = array(
+                        'recette_id' => $recette->insertID,
+                        'produit_id' => $this->request->getPost('select_produit_v_s1')[$i],
+                        'qt' => $this->request->getPost('qte_v_s1')[$i],
+                        'type_paiement' => $this->request->getPost('type_paiement_v_s1')[$i],
+                        'montant' => $this->request->getPost('total_v_s')[$i],
+                    );
+                    $v_s->save($data);
+                }
             }
+
+            $query = $db->query("SELECT IFNULL(SUM((compteur_final - compteur_initial) * prix_unitaire),0) FROM volucompteurs WHERE recette_id = $recette_id");
+            $sum_volucompteur = $query->getResult();
+
+            $query = $db->query("SELECT IFNULL(SUM(montant),0) FROM creditclients WHERE recette_id = $recette_id");
+            $sum_credit = $query->getResult();
+
+            $query = $db->query("SELECT IFNULL(SUM(montant_restant),0) FROM paiements WHERE recette_id = $recette_id");
+            $sum_paiement = $query->getResult();
+
+            $query = $db->query("SELECT IFNULL(SUM(montant),0) FROM venteservices WHERE recette_id = $recette_id");
+            $sum_ventes_services = $query->getResult();
+
+
+
+            $data = array(
+
+                'id' => $recette->insertID,
+                'volucompteur' => $sum_volucompteur,
+                'credit' => $sum_credit,
+                'paiement' => $sum_paiement,
+                'ventes_services' => $sum_ventes_services,
+                'diff' => $sum_paiement - $sum_volucompteur + $sum_credit + $sum_ventes_services,
+                'recette_date' => date_format(date_create($this->request->getPost('recette_date')),"Y-m-d"),
+            );
+            $recette->save($data);
+
+            return redirect()->to('/');
+
+        }else{ 
+            print("Error");
         }
-
-        $query = $db->query("SELECT IFNULL(SUM((compteur_final - compteur_initial) * prix_unitaire),0) FROM volucompteurs WHERE recette_id = $recette_id");
-        $sum_volucompteur = $query->getResult();
-
-        $query = $db->query("SELECT IFNULL(SUM(montant),0) FROM creditclients WHERE recette_id = $recette_id");
-        $sum_credit = $query->getResult();
-
-        $query = $db->query("SELECT IFNULL(SUM(montant_restant),0) FROM paiements WHERE recette_id = $recette_id");
-        $sum_paiement = $query->getResult();
-
-        $query = $db->query("SELECT IFNULL(SUM(montant),0) FROM venteservices WHERE recette_id = $recette_id");
-        $sum_ventes_services = $query->getResult();
-
-
-
-        $data = array(
-
-            'id' => $recette->insertID,
-            'volucompteur' => $sum_volucompteur,
-            'credit' => $sum_credit,
-            'paiement' => $sum_paiement,
-            'ventes_services' => $sum_ventes_services,
-            'diff' => $sum_paiement - $sum_volucompteur + $sum_credit + $sum_ventes_services,
-            'recette_date' => date_format(date_create($this->request->getPost('recette_date')),"Y-m-d"),
-        );
-        $recette->save($data);
 
         // return redirect()->to('/');
     }

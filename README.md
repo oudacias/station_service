@@ -1,8 +1,4 @@
-<p align="center">
-  <a href="https://github.com/zuramai/mazer">
-    <img src="https://github.com/irsyadulibad/mazer-codeigniter/blob/master/public/assets/images/logo/logo.png?raw=true" alt="Mazer logo" height="60">
-  </a>
-</p>
+
 
 <h1 align="center">Mazer for CodeIgniter</h1>
 
