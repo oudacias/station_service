@@ -7,7 +7,7 @@ use CodeIgniter\Model;
 class userInfo extends Model
 {
     protected $table      = 'user_info';
-    protected $primaryKey = 'users_id';
+    protected $primaryKey = 'id';
 
     /*
     protected $firstName = 'nom';
@@ -16,7 +16,7 @@ class userInfo extends Model
     protected $role = 'role';*/
 
     protected $allowedFields = [
-        'users_id','nom', 'prenom','station_id', 
+        'id','nom', 'prenom','station_id', 
     ];
 
     public function getUserStation(int $id)

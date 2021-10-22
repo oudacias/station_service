@@ -15,10 +15,10 @@ class PompeController extends BaseController
     {
         $station = new Station($db);
         $stations = $station->findAll();
-
-        $reservoir = new Reservoir($db);
+        
+        $reservoir = new Reservoir();
         $reservoirs = $reservoir->findAll();
-
+        
         // $pompe = new Pompe($db);
         // $pompes = $pompe->findAll();
 
@@ -26,7 +26,7 @@ class PompeController extends BaseController
                                 r.nom as r_nom,
                                 s.nom as s_nom    
                                 FROM pompes p 
-                                left join reservoirs r on p.reservoir_id = r.id 
+                                left join reservoires r on p.reservoir_id = r.id 
                                 left join stations s on p.station_id = s.id");
         $pompes = $query->getResult();
         return view('initial_dashboard/pompes_list', ['pompes'=>$pompes,'stations'=>$stations,'reservoirs'=>$reservoirs]);

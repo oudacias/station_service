@@ -7,7 +7,7 @@ use CodeIgniter\Model;
 class Reservoir extends Model
 {
     protected $DBGroup              = 'default';
-    protected $table                = 'reservoirs';
+    protected $table                = 'reservoires';
     protected $primaryKey           = 'id';
     protected $useAutoIncrement     = true;
     protected $insertID             = 0;

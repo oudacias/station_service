@@ -15,13 +15,13 @@ class Creditclients extends Migration
             'auto_increment' => true
             ],
             'client_id'   => [
-            'type'           => 'INT',
-            'null' => false
-            ], 
+                'type'           => 'INT',
+                'constraint' => 11, 'unsigned' => true, 'default' => 0
+            ],
             'produit_id'   => [
-            'type'           => 'INT',
-            'null' => false
-            ], 
+                'type'           => 'INT',
+                'constraint' => 11, 'unsigned' => true, 'default' => 0
+            ],
             'reference'   => [
             'type'           => 'TEXT',
             'default' => 0
@@ -50,6 +50,9 @@ class Creditclients extends Migration
             'updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP',
 
         ]);
+        $this->forge->addForeignKey('client_id', 'clients', 'id', 'CASCADE', 'CASCADE');
+        $this->forge->addForeignKey('produit_id', 'produits', 'id', 'CASCADE', 'CASCADE');
+
         $this->forge->addPrimaryKey('id', true);
         $this->forge->createTable('creditclients');
     }

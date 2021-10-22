@@ -31,7 +31,7 @@ $uri3 = $uri[3] ?? '';
                 </li>
                 <?php if(in_groups(['admin',''])){
                     ?>
-                <li class="sidebar-item <?= ($uri1 == 'newuser') ? 'active' : '' ?> ">
+                <li class="sidebar-item <?= ($uri1 == 'Admin Dashboard') ? 'active' : '' ?> ">
                     <a href="/newuser" class='sidebar-link'>
                     <i class="bi bi-grid-fill"></i>
                     <span>Créer un Utilisateur</span>

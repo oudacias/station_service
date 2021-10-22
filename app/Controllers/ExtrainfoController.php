@@ -56,12 +56,13 @@ class ExtrainfoController extends Controller
 		$results2 = $results2->getStations();
 		$query = $db->query('SELECT o.id, p.nom,p.prenom,o.email,o.username,ag.name,o.active, st.nom as stnom 
                             FROM `user_info` p 
-                            Right join `users` o on p.`users_id` = o.`id` 
+                            Right join `users` o on p.`id` = o.`id` 
                             left join `auth_groups_users` g on o.id = g.user_id 
                             left join `auth_groups` ag on g.group_id = ag.id 
                             left join `stations` st on p.station_id = st.id 
                             where o.deleted_at is NULL');
-		$usersList = $query->getresult();
+		$usersList = $query->getResult();
+		//echo var_dump($usersList);
 		return $this->_render($this->config->views['newuser'], ['config' => $this->config, 'results' => $results, 'results2' => $results2, 'usersList' => $usersList]);
 	}
 
@@ -126,19 +127,16 @@ class ExtrainfoController extends Controller
 		}
 
 		$user_id = $users->getInsertID();
-
 		//creates new user in the table user_info 
 
 		$client = new userInfo();
 		$data = array(
-			'users_id' => $user_id,
+			'id' => $user_id,
 			'prenom' => $this->request->getPost('firstname'),
 			'nom' => $this->request->getPost('lastname'),
 			'station_id' => $this->request->getPost('station'),
 		);
 		$client->insert($data);
-
-
 		return redirect()->route('newuser')->with('message', lang('Auth.registerSuccess'));
 	}
 

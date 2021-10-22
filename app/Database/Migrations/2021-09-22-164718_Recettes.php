@@ -15,13 +15,13 @@ class Recette extends Migration
             'auto_increment' => true
             ],  
             'station_id'   => [
-            'type'           => 'INT',
-            'null' => true
-            ], 
+                'type'           => 'INT',
+                'constraint' => 11, 'unsigned' => true, 'default' => 0
+            ],
             'responsable_id'   => [
-            'type'           => 'INT',
-            'null' => true
-            ], 
+                'type'           => 'INT',
+                'null' => true
+                ], 
             'valide'         => [
             'type'           => 'boolean',
             'default'        => false
@@ -63,6 +63,8 @@ class Recette extends Migration
             'updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP',
 
         ]);
+        $this->forge->addForeignKey('station_id', 'stations', 'id', 'CASCADE', 'CASCADE');
+
 
         $this->forge->addPrimaryKey('id', true);
         $this->forge->createTable('recettes');

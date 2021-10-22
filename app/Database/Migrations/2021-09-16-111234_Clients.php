@@ -10,44 +10,44 @@ class Client extends Migration
     {
         $this->forge->addField([
             'id'             => [
-            'type'           => 'INT',
-            'unsigned'       => true,
-            'auto_increment' => true
+                'type'           => 'INT',
+                'unsigned'       => true,
+                'auto_increment' => true
             ],
             'nom'   => [
-            'type'           => 'TEXT',
-            'null' => true
+                'type'           => 'TEXT',
+                'null' => true
             ],
             'actif'         => [
-            'type'           => 'boolean',
-            'default'        => true
+                'type'           => 'boolean',
+                'default'        => true
             ],
             'plafond'         => [
-            'type'           => 'FLOAT',
-            'null' => true
+                'type'           => 'FLOAT',
+                'null' => true
             ],
             'solde'         => [
-            'type'           => 'FLOAT',
-            'null' => true
+                'type'           => 'FLOAT',
+                'null' => true
             ],
             'reliquat'  => [
-            'type'           => 'FLOAT',
-            'null' => true
+                'type'           => 'FLOAT',
+                'null' => true
             ],
             'station_id'  => [
-            'type'           => 'INT',
-            'null' => true
+                'type'           => 'INT',
+                'constraint' => 11, 'unsigned' => true, 'default' => 0
             ],
             'created_at datetime DEFAULT CURRENT_TIMESTAMP',
             'updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP',
 
         ]);
+        $this->forge->addForeignKey('station_id', 'stations', 'id', 'CASCADE', 'CASCADE');
 
         $this->forge->addPrimaryKey('id', true);
         $this->forge->createTable('clients');
-    
     }
-    
+
 
     public function down()
     {
