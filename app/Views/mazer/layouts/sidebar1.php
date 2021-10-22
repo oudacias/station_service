@@ -29,6 +29,15 @@ $uri3 = $uri[3] ?? '';
                         <span>Dashboard</span>
                     </a>
                 </li>
+                <?php if(in_groups(['admin',''])){
+                    ?>
+                <li class="sidebar-item <?= ($uri1 == 'newuser') ? 'active' : '' ?> ">
+                    <a href="/newuser" class='sidebar-link'>
+                    <i class="bi bi-grid-fill"></i>
+                    <span>Créer un Utilisateur</span>
+                </a>
+            </li><?php
+        } ?>
                 <li class="sidebar-item <?= ($uri1 == 'Recettes') ? 'active' : '' ?> has-sub">
                     <a href="#" class='sidebar-link'>
                         <i class="fas fa-gas-pump"></i>                        

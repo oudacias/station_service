@@ -14,7 +14,7 @@ class Auth extends BaseConfig
 	 *
 	 * @var string
 	 */
-	public $defaultUserGroup;
+	public $defaultUserGroup = 'user';
 
 	/**
 	 * --------------------------------------------------------------------
@@ -37,6 +37,7 @@ class Auth extends BaseConfig
 	public $views = [
 		'login'		   => 'Myth\Auth\Views\login',
 		'register'		=> 'Myth\Auth\Views\register',
+		'newuser'		=> 'App\Views\newuser',
 		'forgot'		  => 'Myth\Auth\Views\forgot',
 		'reset'		   => 'Myth\Auth\Views\reset',
 		'emailForgot'	 => 'Myth\Auth\Views\emails\forgot',
