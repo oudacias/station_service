@@ -17,6 +17,10 @@ return [
     'registerSuccess'           => 'Welcome aboard! Please login with your new credentials.',
     'registerCLI'               => 'New user created: {0}, #{1}',
 
+    // Deletion 
+    
+    'deletionSuccess'           => 'User was successfully deleted',
+
     // Activation
     'activationNoUser'          => 'Unable to locate a user with that activation code.',
     'activationSubject'         => 'Activate your account',
@@ -59,7 +63,8 @@ return [
 
     // Groups
     'groupNotFound'             => 'Unable to locate group: {0}.',
-
+    'groupAdded'                => '{0} successfully added',
+    'groupExists'                => 'Group already exists',
     // Permissions
     'permissionNotFound'        => 'Unable to locate permission: {0}',
 
@@ -68,6 +73,10 @@ return [
 
     // Too many requests
     'tooManyRequests'           => 'Too many requests. Please wait {0, number} seconds.',
+
+    // Update User
+
+    'userRoleUpdated'           => 'User Role was updated to {0}.',
 
     // Login views
     'home'                      => 'Home',

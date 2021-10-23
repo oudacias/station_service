@@ -21,7 +21,7 @@ class ReservoirController extends BaseController
         $query = $db->query("SELECT r.id as id, r.nom as r_nom, r.stock_initial,
                                 p.nom as p_nom, p.prix as p_prix,
                                 s.nom as s_nom    
-                                FROM reservoirs r 
+                                FROM reservoires r 
                                 left join produits p on r.produit_id = p.id 
                                 left join stations s on r.station_id = s.id");
         $reservoirs = $query->getResult();

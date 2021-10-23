@@ -24,17 +24,16 @@ class RecetteController extends BaseController
                             IFNULL((compteur_final - v.compteur_initial),0) as sortie, IFNULL((v.compteur_final - v.compteur_initial) * pr.prix,0) as ca
                             FROM volucompteurs v 
                             RIGHT JOIN pompes p ON p.id = v.pompe_id 
-                            INNER join reservoirs r on p.reservoir_id = r.id 
+                            INNER join reservoires r on p.reservoir_id = r.id 
                             INNER join produits pr on r.produit_id = pr.id
                             where v.created_at in (SELECT max(created_at) from volucompteurs GROUP by pompe_id) or v.created_at is null
                             GROUP BY p.id;");
         $volucompteurs = $query->getResult();
 
 
-
         $query = $db->query("SELECT r.id as id, r.nom as r_nom, r.stock_initial as r_stock_initial, pr.nom as pr_nom, pr.id as produits_ids,
                                 IFNULL(s.stock_comptable,0) as s_stock_comptable
-                                FROM reservoirs r 
+                                FROM reservoires r 
                                 LEFT JOIN stocks s on s.reservoir_id = r.id 
                                 INNER join produits pr on r.produit_id = pr.id 
                                 where s.created_at in (SELECT max(created_at) from stocks GROUP by reservoir_id) or s.created_at is null GROUP BY r.id;");
@@ -54,10 +53,10 @@ class RecetteController extends BaseController
         $client = new Client();
         $clients = $client->where('actif', true)->findAll();
 		return view('initial_dashboard/nouvelle_recette',['volucompteurs'=>$volucompteurs,'reservoirs'=>$reservoirs,'moyens'=>$moyens,'clients'=>$clients,'recette_date'=>$recette_date,'produits'=>$produits]);
-	}
+    }
 
     public function add_recette(){
-
+        $db = \Config\Database::connect("default");
         $recette = new Recette();
         $recettes = $recette->where('recette_date', date_format(date_create($this->request->getPost('recette_date')),"Y-m-d"))->findAll();
 

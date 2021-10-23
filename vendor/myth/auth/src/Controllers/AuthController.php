@@ -5,6 +5,7 @@ use CodeIgniter\Session\Session;
 use Myth\Auth\Config\Auth as AuthConfig;
 use Myth\Auth\Entities\User;
 use Myth\Auth\Models\UserModel;
+use App\Models\userInfo;
 
 class AuthController extends Controller
 {
@@ -125,16 +126,16 @@ class AuthController extends Controller
 	public function register()
 	{
         // check if already logged in.
+		/*
 		if ($this->auth->check())
 		{
 			return redirect()->back();
 		}
-
         // Check if registration is allowed
 		if (! $this->config->allowRegistration)
 		{
 			return redirect()->back()->withInput()->with('error', lang('Auth.registerDisabled'));
-		}
+		}*/
 
 		return $this->_render($this->config->views['register'], ['config' => $this->config]);
 	}
@@ -144,6 +145,7 @@ class AuthController extends Controller
 	 */
 	public function attemptRegister()
 	{
+
 		// Check if registration is allowed
 		if (! $this->config->allowRegistration)
 		{
@@ -151,6 +153,7 @@ class AuthController extends Controller
 		}
 
 		$users = model(UserModel::class);
+		$userInfo = model(userInfo::class);
 
 		// Validate basics first since some password rules rely on these fields
 		$rules = [

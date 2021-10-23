@@ -43,16 +43,16 @@ class Stocks extends Migration
             'null'        => false
             ],
             'reservoir_id'         => [
-            'type'           => 'INT',
-            'null'        => false
+                'type'           => 'INT',
+                'constraint' => 11, 'unsigned' => true, 'default' => 0
             ],
-            'produit_id'         => [
-            'type'           => 'INT',
-            'null'        => false
+            'produit_id'         =>[
+                'type'           => 'INT',
+                'constraint' => 11, 'unsigned' => true, 'default' => 0
             ],
             'recette_id'         => [
-            'type'           => 'INT',
-            'null'        => false
+                'type'           => 'INT',
+                'constraint' => 11, 'unsigned' => true, 'default' => 0
             ],
 
             
@@ -71,6 +71,10 @@ class Stocks extends Migration
         ]);
 
         $this->forge->addPrimaryKey('id', true);
+        $this->forge->addForeignKey('recette_id', 'recettes', 'id', 'CASCADE', 'CASCADE');
+        $this->forge->addForeignKey('produit_id', 'produits', 'id', 'CASCADE', 'CASCADE');
+        $this->forge->addForeignKey('reservoir_id', 'reservoires', 'id', 'CASCADE', 'CASCADE');
+
         $this->forge->createTable('stocks');
     
     }

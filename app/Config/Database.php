@@ -87,6 +87,7 @@ class Database extends \CodeIgniter\Database\Config
 		
 
 		// $db = \Config\Database::connect($this-$defaultGroup);
+		//$db = \Config\Database::connect();
 
 		// Ensure that we always set the database group to 'tests' if
 		// we are currently running an automated test suite, so that

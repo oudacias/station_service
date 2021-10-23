@@ -15,13 +15,13 @@ class Volucompteurs extends Migration
             'auto_increment' => true
             ],
             'pompe_id'   => [
-            'type'           => 'INT',
-            'null' => false
-            ], 
-            'product_id'   => [
-            'type'           => 'INT',
-            'null' => false
-            ], 
+                'type'           => 'INT',
+                'constraint' => 11, 'unsigned' => true, 'default' => 0
+            ],
+            'produit_id'   => [
+                'type'           => 'INT',
+                'constraint' => 11, 'unsigned' => true, 'default' => 0
+            ],
             'compteur_initial'   => [
             'type'           => 'FLOAT',
             'default' => 0
@@ -50,6 +50,10 @@ class Volucompteurs extends Migration
             'updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP',
 
         ]);
+        $this->forge->addForeignKey('produit_id', 'produits', 'id', 'CASCADE', 'CASCADE');
+
+        $this->forge->addForeignKey('pompe_id', 'pompes', 'id', 'CASCADE', 'CASCADE');
+
         $this->forge->addPrimaryKey('id', true);
         $this->forge->createTable('volucompteurs');
 

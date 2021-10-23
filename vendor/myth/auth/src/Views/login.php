@@ -9,6 +9,7 @@
 				<h2 class="card-header"><?=lang('Auth.loginTitle')?></h2>
 				<div class="card-body">
 
+					<?= view('Myth\Auth\Views\_message_block') ?>
 
 					<form action="<?= route_to('login') ?>" method="post">
 						<?= csrf_field() ?>
@@ -28,7 +29,7 @@
 							<input type="text" class="form-control <?php if(session('errors.login')) : ?>is-invalid<?php endif ?>"
 								   name="login">
 							<div class="invalid-feedback">
-								Ce champ est obligatoire !
+								<?= session('errors.login') ?>
 							</div>
 						</div>
 <?php endif; ?>
@@ -37,7 +38,7 @@
 							<label for="password"><?=lang('Auth.password')?></label>
 							<input type="password" name="password" class="form-control  <?php if(session('errors.password')) : ?>is-invalid<?php endif ?>">
 							<div class="invalid-feedback">
-								Ce champ est obligatoire !
+								<?= session('errors.password') ?>
 							</div>
 						</div>
 
@@ -55,14 +56,14 @@
 						<button type="submit" class="btn btn-primary btn-block"><?=lang('Auth.loginAction')?></button>
 					</form>
 
-					<!-- <hr> -->
+					<hr>
 
-<!-- <?php if ($config->allowRegistration) : ?>
+<?php if ($config->allowRegistration) : ?>
 					<p><a href="<?= route_to('register') ?>"><?=lang('Auth.needAnAccount')?></a></p>
 <?php endif; ?>
 <?php if ($config->activeResetter): ?>
 					<p><a href="<?= route_to('forgot') ?>"><?=lang('Auth.forgotYourPassword')?></a></p>
-<?php endif; ?> -->
+<?php endif; ?>
 				</div>
 			</div>
 

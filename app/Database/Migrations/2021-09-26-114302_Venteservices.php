@@ -15,9 +15,9 @@ class Venteservices extends Migration
             'auto_increment' => true
             ],
             'produit_id'   => [
-            'type'           => 'INT',
-            'null' => false
-            ], 
+                'type'           => 'INT',
+                'constraint' => 11, 'unsigned' => true, 'default' => 0
+            ],
             'qt'   => [
             'type'           => 'FLOAT',
             'null' => false
@@ -31,9 +31,9 @@ class Venteservices extends Migration
             'default' => 0
             ], 
             'recette_id'   => [
-            'type'           => 'INT',
-            'null' => false
-            ], 
+                'type'           => 'INT',
+                'constraint' => 11, 'unsigned' => true, 'default' => 0
+            ],
             'valide'         => [
             'type'           => 'boolean',
             'default'        => false
@@ -46,6 +46,9 @@ class Venteservices extends Migration
             'updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP',
 
         ]);
+        $this->forge->addForeignKey('recette_id', 'recettes', 'id', 'CASCADE', 'CASCADE');
+        $this->forge->addForeignKey('produit_id', 'produits', 'id', 'CASCADE', 'CASCADE');
+
         $this->forge->addPrimaryKey('id', true);
         $this->forge->createTable('venteservices');
     }

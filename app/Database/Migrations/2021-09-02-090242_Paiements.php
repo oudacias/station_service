@@ -14,12 +14,12 @@ class Paiements extends Migration
             'unsigned'       => true,
             ],
             'recette_id'     => [
-            'type'           => 'INT',
-            'unsigned'       => true,
+                'type'           => 'INT',
+                'constraint' => 11, 'unsigned' => true, 'default' => 0
             ],
             'client_id'     => [
-            'type'           => 'INT',
-            'unsigned'       => true,
+                'type'           => 'INT',
+                'constraint' => 11, 'unsigned' => true, 'default' => 0
             ],
             'reference'   => [
             'type'           => 'TEXT',
@@ -58,6 +58,8 @@ class Paiements extends Migration
             'updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP',
 
         ]);
+        $this->forge->addForeignKey('client_id', 'clients', 'id', 'CASCADE', 'CASCADE');
+        $this->forge->addForeignKey('recette_id', 'recettes', 'id', 'CASCADE', 'CASCADE');
 
         $this->forge->addPrimaryKey('id', true);
         $this->forge->createTable('paiements');
