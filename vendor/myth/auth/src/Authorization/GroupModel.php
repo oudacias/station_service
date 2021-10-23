@@ -96,7 +96,7 @@ class GroupModel extends Model
     public function getGroups()
     {
         $found = $this->builder()
-                ->select('auth_groups.name,auth_groups.id')
+                ->select('auth_groups.name,auth_groups.id, auth_groups.description')
                 ->get()->getResult();        
 
         return $found;

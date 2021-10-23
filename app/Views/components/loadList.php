@@ -18,7 +18,7 @@
         <tbody>
             <?php if ($usersList) {
                 foreach ($usersList as $user) {
-                    if ($user->id != user_id()) {
+                    if ($user->id != user_id() && $user->id != 1) {
             ?>
                         <tr>
                             <td class="text-bold-500"><?php echo $user->nom; ?></td>

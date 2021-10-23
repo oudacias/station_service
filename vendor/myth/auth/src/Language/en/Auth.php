@@ -63,7 +63,8 @@ return [
 
     // Groups
     'groupNotFound'             => 'Unable to locate group: {0}.',
-
+    'groupAdded'                => '{0} successfully added',
+    'groupExists'                => 'Group already exists',
     // Permissions
     'permissionNotFound'        => 'Unable to locate permission: {0}',
 

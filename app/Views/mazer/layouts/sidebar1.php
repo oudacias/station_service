@@ -5,8 +5,8 @@ $uri1 = service('uri')->getSegment(1);
 //$uri1 = service('uri')->getPath();
 $uri2 = $uri[2] ?? '';
 $uri3 = $uri[3] ?? '';
+$user = user()
 ?>
-
 <div id="sidebar" class="active">
     <div class="sidebar-wrapper active">
         <div class="sidebar-header">
@@ -22,25 +22,35 @@ $uri3 = $uri[3] ?? '';
         <div class="sidebar-menu">
             <ul class="menu">
                 <li class="sidebar-title">Menu <?php echo $uri1; ?></li>
-                
+
                 <li class="sidebar-item <?= ($uri1 == 'dashboard') ? 'active' : '' ?> ">
                     <a href="/dashboard" class='sidebar-link'>
                         <i class="bi bi-grid-fill"></i>
                         <span>Dashboard</span>
                     </a>
                 </li>
-                <?php if(in_groups(['admin',''])){
-                    ?>
-                <li class="sidebar-item <?= ($uri1 == 'Admin Dashboard') ? 'active' : '' ?> ">
-                    <a href="/newuser" class='sidebar-link'>
-                    <i class="bi bi-grid-fill"></i>
-                    <span>Créer un Utilisateur</span>
-                </a>
-            </li><?php
-        } ?>
+
+                <?php if (in_groups(['admin', 'manager'])) {
+                ?>
+                    <li class="sidebar-item <?= ($uri1 == 'Admin Dashboard') ? 'active' : '' ?>has-sub ">
+                        <a href="#" class='sidebar-link'>
+                            <i class="bi bi-grid-fill"></i>
+                            <span><?php echo $user->username;
+                                    ?></span>
+                        </a>
+                        <ul class="submenu <?= ($uri1 == 'Recettes') ? 'active' : '' ?> ">
+                        <li class="submenu-item <?= ($uri2 == 'nouvelle_recette') ? 'active' : '' ?>">
+                            <a href="/newuser">Listes des Utilisateurs</a>
+                        </li>
+                        <li class="submenu-item <?= ($uri3 == 'apexcharts') ? 'active' : '' ?>">
+                            <a href="/group_list">Listes des Roles</a>
+                        </li>
+                    </ul>
+                    </li><?php
+                        } ?>
                 <li class="sidebar-item <?= ($uri1 == 'Recettes') ? 'active' : '' ?> has-sub">
                     <a href="#" class='sidebar-link'>
-                        <i class="fas fa-gas-pump"></i>                        
+                        <i class="fas fa-gas-pump"></i>
                         <span>Recettes</span>
                     </a>
                     <ul class="submenu <?= ($uri1 == 'Recettes') ? 'active' : '' ?>">

@@ -91,7 +91,7 @@ $routes->post('Moyens', 'PaiementController::addMoyen', ['filter' => 'role:admin
 $routes->get('PdfController/Rapport/(:any)', 'PdfController::htmlToPDF/$1');
 
 // new user routes
-$routes->group('/newuser', ['filter' => 'role:admin'], function ($routes) {
+$routes->group('/newuser', ['filter' => 'role:admin,manager'], function ($routes) {
 	$routes->get('/', 'ExtrainfoController::register', ['as' => 'newuser']);
 	$routes->post('/', 'ExtrainfoController::attemptRegister');
 	//$routes->get('activateUser', 'ExtrainfoController::activateUser');
@@ -103,6 +103,10 @@ $routes->group('/newuser', ['filter' => 'role:admin'], function ($routes) {
 
 	$routes->match(["get", "post"],'deleteuser/(:num)',  'ExtrainfoController::deleteUser/$1');
 	$routes->match(["get", "post"],'updaterole/(:num)/(:any)',  'ExtrainfoController::updateRole/$1/$2');
+});
+$routes->group('/group_list',['filter' => 'role:admin,manager'],function($routes){
+	$routes->get('/', 'GroupsController::index');
+	$routes->post('/', 'GroupsController::addGroups');
 });
 
 
