@@ -27,17 +27,17 @@ class ReservoirController extends BaseController
         $reservoirs = $query->getResult();
         // $reservoir = new Reservoir($db);
         // $reservoirs = $reservoir->findAll();
-        return view('initial_dashboard/reservoirs_list', ['reservoirs'=>$reservoirs,'stations'=>$stations,'produits'=>$produits]);
+        return view('initial_dashboard/reservoirs_list', ['reservoirs' => $reservoirs, 'stations' => $stations, 'produits' => $produits]);
     }
     public function addReservoir()
     {
         $reservoir = new Reservoir();
-        
+
         $data = array(
             'nom' => $this->request->getPost('nom'),
-            'stock_initial' => $this->request->getPost('stock_initial'),            
-            'station_id' => $this->request->getPost('station_id'),            
-            'produit_id' => $this->request->getPost('produit_id'),            
+            'stock_initial' => $this->request->getPost('stock_initial'),
+            'station_id' => $this->request->getPost('station_id'),
+            'produit_id' => $this->request->getPost('produit_id'),
         );
         $reservoir->save($data);
         return redirect()->to('Configuration/Reservoirs');

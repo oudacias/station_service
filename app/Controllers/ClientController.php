@@ -20,12 +20,14 @@ class ClientController extends BaseController
         // echo count($this->request->getPost('nom'));
 
         $client = new Client();
+        //$data2 = $this->request->getPost();
             $data = array(
                 'nom' => $this->request->getPost('nom'),
-                'plafond' => $this->request->getPost('plafond'),
+                'plafond' => $this->request->getPost(('plafond')),
                 'solde' => 0,
                 'reliquat' => $this->request->getPost('plafond')
             );
+            echo var_dump($data);
             $client->save($data);
             // return view('initial_dashboard/index');
             return redirect()->back()->withInput(); 

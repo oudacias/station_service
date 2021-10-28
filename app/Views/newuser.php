@@ -9,10 +9,10 @@
             </div>
             <?= view('Myth\Auth\Views\_message_block') ?>
             <div class="col-12 d-flex justify-content-left ">
-
+                <?php if(in_groups(['admin'])){?>
                 <button type="button" class="btn btn-outline-primary mx-lg-4" data-bs-toggle="modal" data-bs-target="#inlineForm">
                     Creer Un Utilisateur
-                </button>
+                </button><?php }?>
             </div>
             <br>
             <br>

@@ -33,7 +33,7 @@
                             <div class="modal-body">
                                 <label>Nom</label>
                                 <div class="form-group">
-                                    <input type="text" name="nom[]" class="form-control" required>
+                                    <input type="text" name="nom" class="form-control" required>
                                 </div>
                                 <label>Plafond</label>
                                 <div class="form-group">

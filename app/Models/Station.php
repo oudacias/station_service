@@ -26,9 +26,21 @@ class Station extends Model
     {
 
         $found = $this->builder()
-        ->select('id,nom')
+        ->select('id,nom,localisation,created_at,updated_at')
         ->get()->getResult();        
 
         return $found;
+    }
+    public function getStationID($id)
+    {
+
+        $found = $this->builder()
+        ->select('stations.id as id')
+        ->join('user_info','user_info.station_id=stations.id','left')
+        ->where('user_info.id',$id)
+        ->get()->getRowArray();
+         
+
+        return $found['id'];
     }
 }

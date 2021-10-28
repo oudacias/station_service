@@ -11,7 +11,7 @@
                 <div class="col-sm-6 offset-sm-3">
 
 
-                    <form action="<?= route_to('extrainfo') ?>" method="post">
+                    <form action="<?= route_to('/newuser') ?>" method="post">
                         <?= csrf_field() ?>
 
                         <div class="form-group">

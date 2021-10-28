@@ -79,10 +79,10 @@
                                                     foreach($stations as $station){                
                                                 ?>
                                                 <tr>
-                                                    <td class="text-bold-500"><?php echo $station['id'];?></td>
-                                                    <td><?php echo $station['nom'];?></td>
-                                                    <td class="text-bold-500"><?php echo $station['localisation'];?></td>
-                                                    <td class="text-bold-500"><?php echo date('Y-m-d', strtotime($station['created_at']));?></td>
+                                                    <td class="text-bold-500"><?php echo $station->id;?></td>
+                                                    <td><?php echo $station->nom;?></td>
+                                                    <td class="text-bold-500"><?php echo $station->localisation;?></td>
+                                                    <td class="text-bold-500"><?php echo date('Y-m-d', strtotime($station->created_at));?></td>
                                                 </tr>
                                                 <?php 
                                                     } 

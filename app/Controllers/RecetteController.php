@@ -10,9 +10,9 @@ use App\Models\VoluCompteur;
 use App\Models\Stock;
 use App\Models\Produit;
 use App\Models\Creditclient;
+use App\Models\Station;
+use App\Models\userInfo;
 use App\Models\Venteservice;
-
-
 
 class RecetteController extends BaseController
 {
@@ -58,17 +58,25 @@ class RecetteController extends BaseController
     public function add_recette(){
         $db = \Config\Database::connect("default");
         $recette = new Recette();
+        $stations = new Station();;
+        
+        $user = new userInfo();
         $recettes = $recette->where('recette_date', date_format(date_create($this->request->getPost('recette_date')),"Y-m-d"))->findAll();
 
         if(!is_null($recettes)) {
+
+            $recetteCount = $recette->getRecetteCount();
+            $recette_id = $recetteCount['id'];
             $data = array(
                 'responsable_id' => user_id(),
+                'station_id' => $stations->getStationID(user_id()),//$user,
                 'recette_date' => date_format(date_create($this->request->getPost('recette_date')),"Y-m-d"),
             );
-            $recette->save($data);
-
-            $paiement = new Paiement();
-            if(!is_null($this->request->getPost('p_client_id'))){
+            echo var_dump($data);
+           $recette->save($data);
+            
+           $paiement = new Paiement();
+           if(!is_null($this->request->getPost('p_client_id'))){
                 for($i=0; $i<count($this->request->getPost('p_client_id')); $i++){
                     $data = array(
                         'recette_id' => $recette->insertID,
@@ -83,6 +91,7 @@ class RecetteController extends BaseController
                     $paiement->save($data);
                 }
             }
+            
             $volucompteur = new VoluCompteur();
             if(!is_null($this->request->getPost('pompe_ids'))){
                 for($i=0; $i<count($this->request->getPost('pompe_ids')); $i++){
@@ -150,33 +159,34 @@ class RecetteController extends BaseController
                 }
             }
 
-            $query = $db->query("SELECT IFNULL(SUM((compteur_final - compteur_initial) * prix_unitaire),0) FROM volucompteurs WHERE recette_id = $recette_id");
-            $sum_volucompteur = $query->getResult();
+            $query = $db->query("SELECT IFNULL(SUM((compteur_final - compteur_initial) * prix_unitaire),0) as sum_volucompteur FROM volucompteurs WHERE recette_id =" .$data['recette_id']);
+            $sum_volucompteur = $query->getRow();
 
-            $query = $db->query("SELECT IFNULL(SUM(montant),0) FROM creditclients WHERE recette_id = $recette_id");
-            $sum_credit = $query->getResult();
+            $query = $db->query("SELECT IFNULL(SUM(montant),0) as sum_credit FROM creditclients WHERE recette_id =" .$data['recette_id']);
+            $sum_credit = $query->getRow();
 
-            $query = $db->query("SELECT IFNULL(SUM(montant_restant),0) FROM paiements WHERE recette_id = $recette_id");
-            $sum_paiement = $query->getResult();
+            $query = $db->query("SELECT IFNULL(SUM(montant_restant),0) as sum_paiement FROM paiements WHERE recette_id =" .$data['recette_id']);
+            $sum_paiement = $query->getRow();
 
-            $query = $db->query("SELECT IFNULL(SUM(montant),0) FROM venteservices WHERE recette_id = $recette_id");
-            $sum_ventes_services = $query->getResult();
+            $query = $db->query("SELECT IFNULL(SUM(montant),0) as sum_ventes_services FROM venteservices WHERE recette_id =" .$data['recette_id']);
+            $sum_ventes_services = $query->getRow();
 
 
 
-            $data = array(
+           $data = array(
 
                 'id' => $recette->insertID,
-                'volucompteur' => $sum_volucompteur,
-                'credit' => $sum_credit,
-                'paiement' => $sum_paiement,
-                'ventes_services' => $sum_ventes_services,
-                'diff' => $sum_paiement - $sum_volucompteur + $sum_credit + $sum_ventes_services,
+                'volucompteur' => $sum_volucompteur->sum_volucompteur,
+                'credit' => $sum_credit->sum_credit,
+                'paiement' => $sum_paiement->sum_paiement,
+                'ventes_services' => $sum_ventes_services->sum_ventes_services,
+                'diff' => $sum_paiement->sum_paiement - $sum_volucompteur->sum_volucompteur + $sum_credit->sum_credit + $sum_ventes_services->sum_ventes_services,
                 'recette_date' => date_format(date_create($this->request->getPost('recette_date')),"Y-m-d"),
             );
             $recette->save($data);
 
-            return redirect()->to('/');
+
+            //return redirect()->to('/');
 
         }else{ 
             print("Error");

@@ -10,8 +10,11 @@ class StationController extends BaseController
 {
     public function index()
     {
-        $station = new Station($db);
-        $stations = $station->findAll();
+        $stations = new Station($db);
+        if(in_groups("admin")){
+            $stations = $stations->getStations();
+        }
+        else $stations = $stations->where('id',user_id())->getStations();
         return view('initial_dashboard/stations_list', ['stations'=>$stations]);
     }
     public function addStation()

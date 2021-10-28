@@ -14,7 +14,7 @@ class Recette extends Model
     //protected $returnType     = 'array';
     //protected $useSoftDeletes = true;
 
-    protected $allowedFields = ['reference','valide','cloture','paiements','ventes','consommation_cuves','consommation_volucompteurs','etat','recette_date'];
+    protected $allowedFields = ['responsable_id','station_id','reference','valide','cloture','paiements','ventes','consommation_cuves','consommation_volucompteurs','etat','recette_date'];
 
     protected $useTimestamps = true;
     // protected $createdField  = 'created_date';
@@ -24,5 +24,12 @@ class Recette extends Model
     //protected $validationRules    = [];
     //protected $validationMessages = [];
     //protected $skipValidation     = false;
+
+    public function getRecetteCount()
+    {
+        $data = $this->builder()->select('id')->get()->getLastRow('array');
+        return $data;
+
+    }
     
 }

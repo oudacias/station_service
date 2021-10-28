@@ -16,20 +16,9 @@ class userInfo extends Model
     protected $role = 'role';*/
 
     protected $allowedFields = [
-        'id','nom', 'prenom','station_id', 
+        'id', 'nom', 'prenom', 'station_id', 
     ];
 
-    public function getUserStation(int $id)
-    {
-
-        $builder = $this->db->table('stations');
-            $found =$builder->select('nom')
-                ->join('user_info ', 'stations.id = user_info.station_id','left')
-                ->where('user_info.users_id', $id)
-                ->get()->getResult();       
-
-        return $found;
-    }
     //protected $useAutoIncrement = true;
 
     //protected $returnType     = 'array';
