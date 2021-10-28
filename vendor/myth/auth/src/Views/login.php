@@ -1,6 +1,6 @@
 <?= $this->extend($config->viewLayout) ?>
 <?= $this->section('main') ?>
-
+<link rel="stylesheet" href="/assets/css/bootstrap.css">
 <div class="container">
 	<div class="row">
 		<div class="col-sm-6 offset-sm-3">
@@ -8,7 +8,12 @@
 			<div class="card">
 				<h2 class="card-header"><?=lang('Auth.loginTitle')?></h2>
 				<div class="card-body">
-
+					<div class="row justify-content-center">
+						<img src="/assets/images/logo/logo_ziz.jpeg" style="width:330px" alt="Logo" srcset="">
+					</div>
+					<br>
+					<br>
+				<?= view('Myth\Auth\Views\_message_block') ?>
 
 					<form action="<?= route_to('login') ?>" method="post">
 						<?= csrf_field() ?>
@@ -51,8 +56,13 @@
 <?php endif; ?>
 
 						<br>
+						<div class="row justify-content-center">
+							<div class="col-3">
+								<button type="submit" class="btn btn-primary"><?=lang('Auth.loginAction')?></button>
+							</div>
+						</div>
 
-						<button type="submit" class="btn btn-primary btn-block"><?=lang('Auth.loginAction')?></button>
+						
 					</form>
 
 					<!-- <hr> -->

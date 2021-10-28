@@ -92,6 +92,27 @@ class GroupModel extends Model
      *
      * @return array
      */
+
+    public function getGroups()
+    {
+        $found = $this->builder()
+                ->select('auth_groups.name,auth_groups.id, auth_groups.description')
+                ->get()->getResult();        
+
+        return $found;
+    }
+
+    public function getGroupName(int $groupId)
+    {
+
+            $found = $this->builder()
+                ->select('auth_groups.name,auth_groups.id')
+                ->where('id', $groupId)
+                ->get()->getResultArray();        
+
+        return $found;
+    }
+    
     public function getGroupsForUser(int $userId)
     {
         if (null === $found = cache("{$userId}_groups"))

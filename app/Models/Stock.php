@@ -14,14 +14,13 @@ class Stock extends Model
     protected $returnType           = 'array';
     protected $useSoftDeletes       = false;
     protected $protectFields        = true;
-    protected $allowedFields        = ['recette_id','pompe_id','sortie','entree','stock_initial','stock_comptable','stock_physique','manquant_excedent','reservoir_id','produit_id'];
+    protected $allowedFields        = ['recette_id','pompe_id','sortie','entree','stock_initial','stock_comptable','stock_physique','manquant_excedent','reservoir_id','produit_id','prix_achat'];
 
     // Dates
     protected $useTimestamps        = false;
     protected $dateFormat           = 'datetime';
     protected $createdField         = 'created_at';
     protected $updatedField         = 'updated_at';
-    protected $deletedField         = 'deleted_at';
 
     // Validation
     protected $validationRules      = [];

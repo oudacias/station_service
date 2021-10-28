@@ -67,6 +67,7 @@
                                                     <th>ID</th>
                                                     <th>Nom</th>
                                                     <th>Date de création</th>
+                                                    <th>Modifier</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -77,6 +78,50 @@
                                                     <td class="text-bold-500"><?php echo $moyen['id'];?></td>
                                                     <td><?php echo $moyen['nom'];?></td>
                                                     <td class="text-bold-500"><?php echo date('Y-m-d', strtotime($moyen['created_at']));?></td>
+                                                    <td>
+                                                        <span class="fonticon-wrap">
+                                                            <i class="far fa-edit" data-bs-toggle="modal"
+                                                            data-bs-target="#inlineForm<?php echo $moyen['id'];?>"></i>                                                        
+                                                        </span>
+                                                    </td>
+                                                    <div class="modal fade text-left" id="inlineForm<?php echo $moyen['id'];?>" tabindex="-1" role="dialog"
+                                                        aria-labelledby="edit_station<?php echo $moyen['id'];?>" aria-hidden="true">
+                                                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable"
+                                                            role="document">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h4 class="modal-title" id="edit_station<?php echo $moyen['id'];?>">Modifier Moyen de paiement</h4>
+                                                                    <button type="button" class="close" data-bs-dismiss="modal"
+                                                                        aria-label="Close">
+                                                                        <i data-feather="x">X</i>
+                                                                    </button>
+                                                                </div>
+                                                                <form method="post" action=<?php echo site_url('Moyens') ?>>
+                                                                    <input type="hidden" name="moyen_id" value="<?php echo $moyen['id'];?>" class="form-control" required>
+
+                                                                    <div class="modal-body">
+                                                                        <label>Nom</label>
+                                                                        <div class="form-group">
+                                                                            <input type="text" name="nom" value="<?php echo $moyen['nom'];?>" class="form-control" required>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-12 d-flex justify-content-center">
+                                                                        <div class="modal-footer ">
+                                                                            <button type="button" class="btn btn-light-secondary"
+                                                                                data-bs-dismiss="modal">
+                                                                                <i class="bx bx-x d-block d-sm-none"></i>
+                                                                                <span class="d-none d-sm-block">Fermer</span>
+                                                                            </button>
+                                                                            <button type="submit" class="btn btn-primary ml-1">
+                                                                                <i class="bx bx-check d-block d-sm-none"></i>
+                                                                                <span class="d-none d-sm-block">Modifier</span>
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </tr>
                                                 <?php 
                                                     } 

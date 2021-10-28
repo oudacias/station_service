@@ -14,7 +14,7 @@ class Volucompteur extends Model
     protected $returnType           = 'array';
     protected $useSoftDeletes       = false;
     protected $protectFields        = true;
-    protected $allowedFields        = ['pompe_id','compteur_initial','compteur_final','recette_id','valide','cloture'];
+    protected $allowedFields        = ['product_id','pompe_id','compteur_initial','compteur_final','recette_id','valide','cloture','prix_unitaire'];
 
     // Dates
     protected $useTimestamps        = false;

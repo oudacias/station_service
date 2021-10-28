@@ -9,7 +9,9 @@
         "codeigniter4/codeigniter4": "dev-develop",
         "dompdf/dompdf": "^1.0",
         "myth/auth": "^1.0",
-        "illuminate/database": "^8.61"
+        "illuminate/database": "^8.61",
+        "mpdf/mpdf": "^8.0",
+        "spipu/html2pdf": "^5.2"
     },
     "require-dev": {
         "fzaninotto/faker": "^1.9@dev",

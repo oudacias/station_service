@@ -14,7 +14,7 @@ class Reservoir extends Model
     protected $returnType           = 'array';
     protected $useSoftDeletes       = false;
     protected $protectFields        = true;
-    protected $allowedFields        = ['nom','stock_initial','station_id','produit_id'];
+    protected $allowedFields        = ['nom','stock_initial','station_id','produit_id','actif'];
 
     // Dates
     protected $useTimestamps        = false;

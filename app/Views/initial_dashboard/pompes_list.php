@@ -39,7 +39,7 @@
                                 <fieldset class="form-group">
                                     <select class="form-select" id="basicSelect" name="reservoir_id">
                                         <?php foreach($reservoirs as $reservoir){ ?>
-                                            <option value="<?php echo $reservoir['id'] ?>"> <?php echo $reservoir['nom'] ?></option>
+                                            <option value="<?php echo $reservoir->id ?>"> <?php echo $reservoir->nom ?></option>
                                         <?php } ?>
                                     </select>
                                 </fieldset>
@@ -84,7 +84,9 @@
                                                     <th>NOM</th>
                                                     <th>Reservoir</th>
                                                     <th>Station</th>
+                                                    <?php if (in_groups(['admin_central','admin','manager'])) { ?>
                                                     <th>ACTION</th>
+                                                    <?php } ?>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -96,7 +98,67 @@
                                                     <td class="text-bold-500"><?php echo $pompe->p_nom;?></td>
                                                     <td><?php echo $pompe->r_nom ;?></td>
                                                     <td><?php echo $pompe->s_nom ;?></td>
-                                                    <td></td>
+                                                    <?php if (in_groups(['admin_central','admin','manager'])) { ?>
+                                                        <td>
+                                                            <span class="fonticon-wrap">
+                                                                <i class="far fa-edit" data-bs-toggle="modal"
+                                                                data-bs-target="#inlineForm<?php echo $pompe->id;?>"></i>                                                        
+                                                            </span>
+                                                        </td>
+                                                        <div class="modal fade text-left" id="inlineForm<?php echo $pompe->id;?>" tabindex="-1" role="dialog"
+                                                            aria-labelledby="edit_station<?php echo $pompe->id;?>" aria-hidden="true">
+                                                            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable"
+                                                                role="document">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h4 class="modal-title" id="edit_station<?php echo $pompe->id;?>">Modifier Pompe</h4>
+                                                                        <button type="button" class="close" data-bs-dismiss="modal"
+                                                                            aria-label="Close">
+                                                                            <i data-feather="x">X</i>
+                                                                        </button>
+                                                                    </div>
+                                                                    <form method="post" action=<?php echo site_url('PompesEdit') ?>>
+                                                                        <input type="hidden" name="pompe_id" value="<?php echo $pompe->id;?>" class="form-control">
+                                                                        <div class="modal-body">
+                                                                            <label>Nom</label>
+                                                                            <div class="form-group">
+                                                                                <input type="text" name="nom" value="<?php echo $pompe->p_nom;?>" class="form-control" required>
+                                                                            </div>
+                                                                            <label>Reservoir</label>
+                                                                            <fieldset class="form-group">
+                                                                                <select class="form-select" id="basicSelect" name="reservoir_id">
+                                                                                    <?php foreach($reservoirs as $reservoir){ ?>
+                                                                                        <option value="<?php echo $reservoir->id ?>" <?php if($reservoir->nom == $pompe->r_nom){ ?> selected <?php }  ?>> <?php echo $reservoir->nom ?></option>
+                                                                                    <?php } ?>
+                                                                                </select>
+                                                                            </fieldset>
+                                                                            <label>Station</label>
+                                                                            <fieldset class="form-group">
+                                                                                <select class="form-select" id="basicSelect" name="station_id">
+                                                                                    <?php foreach($stations as $station){ ?>
+                                                                                        <option value="<?php echo $station['id'] ?>" <?php if($station['nom'] == $pompe->s_nom){ ?> selected <?php }  ?>> <?php echo $station['nom'] ?></option>
+                                                                                    <?php } ?>
+                                                                                </select>
+                                                                            </fieldset>
+                                                                        </div>
+                                                                        <div class="col-12 d-flex justify-content-center">
+                                                                            <div class="modal-footer ">
+                                                                                <button type="button" class="btn btn-light-secondary"
+                                                                                    data-bs-dismiss="modal">
+                                                                                    <i class="bx bx-x d-block d-sm-none"></i>
+                                                                                    <span class="d-none d-sm-block">Fermer</span>
+                                                                                </button>
+                                                                                <button type="submit" class="btn btn-primary ml-1">
+                                                                                    <i class="bx bx-check d-block d-sm-none"></i>
+                                                                                    <span class="d-none d-sm-block">Modifier</span>
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    <?php } ?>
                                                 </tr>
                                                 <?php 
                                                     } 

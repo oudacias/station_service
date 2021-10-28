@@ -14,7 +14,7 @@ class Client extends Model
     protected $returnType           = 'array';
     protected $useSoftDeletes       = false;
     protected $protectFields        = true;
-    protected $allowedFields        = ['nom','actif','plafond','solde','reliquat'];
+    protected $allowedFields        = ['nom','actif','plafond','solde','reliquat','station_id'];
 
     // Dates
     protected $useTimestamps        = false;

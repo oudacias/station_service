@@ -50,6 +50,10 @@ class Recette extends Migration
             'type'           => 'FLOAT',
             'null' => true
             ],
+            'depense'  => [
+            'type'           => 'FLOAT',
+            'null' => true
+            ],
             'diff'  => [
             'type'           => 'FLOAT',
             'null' => true

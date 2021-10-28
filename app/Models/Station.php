@@ -21,4 +21,14 @@ class Station extends Model
     protected $dateFormat           = 'datetime';
     protected $createdField         = 'created_at';
     protected $updatedField         = 'updated_at';
+
+    public function getStations()
+    {
+
+        $found = $this->builder()
+        ->select('id,nom')
+        ->get()->getResult();        
+
+        return $found;
+    }
 }

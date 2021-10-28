@@ -17,6 +17,10 @@ return [
     'registerSuccess'           => 'Bienvenue ! Veuillez vous connecter avec vos identifiants.',
     'registerCLI'               => 'Nouvel utilisateur créé : {0}, #{1}',
 
+    // Deletion 
+
+    'deletionSuccess'           => 'User was successfully delete.',
+
     // Activation
     'activationNoUser'          => 'Aucun utilisateur avec ce code d’activation n’a été trouvé.',
     'activationSubject'         => 'Activez votre compte',

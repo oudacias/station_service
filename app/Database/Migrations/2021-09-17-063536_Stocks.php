@@ -54,8 +54,10 @@ class Stocks extends Migration
             'type'           => 'INT',
             'null'        => false
             ],
-
-            
+            'prix_achat'  => [
+            'type'           => 'FLOAT',
+            'null'        => false
+            ],
             'valide'         => [
             'type'           => 'boolean',
             'default'        => false

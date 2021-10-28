@@ -30,6 +30,10 @@ class Reservoires extends Migration
             'type'           => 'INT',
             'null'        => false
             ],
+            'actif'         => [
+            'type'           => 'boolean',
+            'default'        => 0
+            ],
             
             'created_at datetime DEFAULT CURRENT_TIMESTAMP',
             'updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP',

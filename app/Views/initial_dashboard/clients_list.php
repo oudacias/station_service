@@ -33,12 +33,20 @@
                             <div class="modal-body">
                                 <label>Nom</label>
                                 <div class="form-group">
-                                    <input type="text" name="nom[]" class="form-control" required>
+                                    <input type="text" name="nom" class="form-control" required>
                                 </div>
-                                <label>Plafond</label>
+                                <label>Station</label>
+                                <fieldset class="form-group">
+                                    <select class="form-select" id="basicSelect" name="station_id">
+                                        <?php foreach($stations as $station){ ?>
+                                            <option value="<?php echo $station['id'] ?>"> <?php echo $station['nom'] ?></option>
+                                        <?php } ?>
+                                    </select>
+                                </fieldset>
+                                <!-- <label>Plafond</label>
                                 <div class="form-group">
                                     <input type="number" name="plafond" class="form-control">
-                                </div>
+                                </div> -->
                             </div>
                             <div class="col-12 d-flex justify-content-center">
                                 <div class="modal-footer ">
@@ -69,11 +77,13 @@
                                             <thead>
                                                 <tr>
                                                     <th>NOM</th>
-                                                    <th>PLAFOND</th>
+                                                    <!-- <th>PLAFOND</th>
                                                     <th>SOLDE</th>
-                                                    <th>RELIQUAT</th>
+                                                    <th>RELIQUAT</th> -->
+                                                    <th>Station</th>
+                                                    <th>Historique</th>
                                                     <th>ACTIF</th>
-                                                    <th>ACTION</th>
+                                                    <th>DÉ / BLOQUER</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -81,16 +91,20 @@
                                                     foreach($clients as $client){                
                                                 ?>
                                                 <tr>
-                                                    <td class="text-bold-500"><?php echo $client['nom'];?></td>
-                                                    <td><?php echo $client['plafond'];?></td>
-                                                    <td class="text-bold-500"><?php echo $client['solde'];?></td>
-                                                    <td><?php echo $client['reliquat'];?></td>
-                                                    <td><?php if($client['actif'] == 1) { ?>                                
-                                                        <span class="badge bg-success">Actif</span>
-                                                        <?php }else if ($client['actif'] == 0){ ?>
-                                                            <span class="badge bg-danger">Bloqué</span>
+                                                    <td class="text-bold-500"><?php echo $client->nom;?></td>
+                                                    <!-- <td><?php //echo $client['plafond'];?></td> -->
+                                                    <!-- <td class="text-bold-500"><?php //echo $client['solde'];?></td> -->
+                                                    <!-- <td><?php //echo $client['reliquat'];?></td> -->
+                                                    <td><?php echo $client->station_nom;?></td>
+                                                    <td><a href="/Configuration/Clients/Historique/<?php echo $client->client_id;?>"><i class="far fa-file-alt"></i></a></td>
+                                                    <td><?php if($client->actif == 1) { ?>                                
+                                                        <span id="actif<?php echo $client->id ?>" class="badge bg-success">Actif</span>
+                                                        <td><i id="ban_id<?php echo $client->id ?>" onclick="ban(<?php echo $client->id?>)" class="fas fa-ban"></i></td>
+                                                        <?php }else{ ?>
+                                                            <span id="actif<?php echo $client->id ?>" class="badge bg-danger">Bloqué</span>
+                                                            <td><i id="ban_id<?php echo $client->id ?>" onclick="ban(<?php echo $client->id?>)" class="fas fa-check-circle"></i></td>
+
                                                         <?php } ?>
-                                                    <td></td>
                                                 </tr>
                                                 <?php 
                                                     } 
@@ -115,6 +129,47 @@
 
 <?= $this->section('javascript') ?>
 <script src="/assets/vendors/simple-datatables/simple-datatables.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<script>
+    function ban(id,ban){
+            var className = $("#ban_id"+id).attr("class");
+            var actif = 0;
+            var text = "Bloqué"            
+            if(className == 'fas fa-check-circle'){
+                actif = 1;
+                text = "Actif"
+                $("#ban_id"+id).toggleClass("fa-check-circle fa-ban");
+                $("#actif"+id).toggleClass("bg-success bg-danger");
+            }else if(className == 'fas fa-ban'){
+                $("#ban_id"+id).toggleClass("fa-ban fa-check-circle");
+                $("#actif"+id).toggleClass("bg-danger bg-success");
+            }
+            var client_id = id;
+            $.ajax({
+                type : "POST",
+                url  : "<?php echo site_url('/activateClient')?>",
+                dataType : "JSON",
+                data : {client_id:client_id , actif:actif},
+                success: function(data){
+                    // $("#actif"+id).toggleClass( "bg-success", "bg-danger" );
+                    // $("#actif"+id).toggleText('Initial', 'Secondary');
+                    $("#actif"+id).text(text);
+                }
+            });
+            return false;
+        }
+ 
+</script>
+
+
+
+
+
+
+
+
+
 <script>
     // Simple Datatable
     let table1 = document.querySelector('#table1');

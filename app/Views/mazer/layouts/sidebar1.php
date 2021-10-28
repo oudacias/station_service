@@ -1,9 +1,8 @@
 <?php
 $uri = service('uri')->getSegments();
 $uri1 = service('uri')->getSegment(1);
-//$uri1 = $uri[1] ?? 'index';
-//$uri1 = service('uri')->getPath();
-$uri2 = $uri[2] ?? '';
+
+$uri4 = $uri[1] ?? '';
 $uri3 = $uri[3] ?? '';
 ?>
 
@@ -12,7 +11,7 @@ $uri3 = $uri[3] ?? '';
         <div class="sidebar-header">
             <div class="d-flex justify-content-between">
                 <div class="logo">
-                    <a href="index.html"><img src="/assets/images/logo/logo.png" alt="Logo" srcset=""></a>
+                    <a href="http://www.ziz.ma/"><img src="/assets/images/logo/logo_ziz.jpeg" alt="Logo" srcset=""></a>
                 </div>
                 <div class="toggler">
                     <a href="#" class="sidebar-hide d-xl-none d-block"><i class="bi bi-x bi-middle"></i></a>
@@ -21,10 +20,10 @@ $uri3 = $uri[3] ?? '';
         </div>
         <div class="sidebar-menu">
             <ul class="menu">
-                <li class="sidebar-title">Menu <?php echo $uri1; ?></li>
+                <li class="sidebar-title text-center"><?php print_r(user()->username);  ?> <br> <span class="text-primary"><?php print_r(user()->roles[array_key_first(user()->roles)]); ?></span> </li>
                 
-                <li class="sidebar-item <?= ($uri1 == 'dashboard') ? 'active' : '' ?> ">
-                    <a href="/dashboard" class='sidebar-link'>
+                <li class="sidebar-item <?= ($uri1 == '') ? 'active' : '' ?> ">
+                    <a href="/" class='sidebar-link'>
                         <i class="bi bi-grid-fill"></i>
                         <span>Dashboard</span>
                     </a>
@@ -35,11 +34,11 @@ $uri3 = $uri[3] ?? '';
                         <span>Recettes</span>
                     </a>
                     <ul class="submenu <?= ($uri1 == 'Recettes') ? 'active' : '' ?>">
-                        <li class="submenu-item <?= ($uri2 == 'nouvelle_recette') ? 'active' : '' ?>">
+                        <li class="submenu-item <?= ($uri4 == 'nouvelle_recette') ? 'active' : '' ?>">
                             <a href="/Recettes/nouvelle_recette">Nouvelle Recette</a>
                         </li>
-                        <li class="submenu-item <?= ($uri3 == 'apexcharts') ? 'active' : '' ?>">
-                            <a href="/mazer/ui/charts/apexcharts">Recettes</a>
+                        <li class="submenu-item <?= ($uri4 == 'Liste') ? 'active' : '' ?>">
+                            <a href="/Recettes/Liste">Recettes</a>
                         </li>
                     </ul>
                 </li>
@@ -49,22 +48,25 @@ $uri3 = $uri[3] ?? '';
                         <span>Configuration</span>
                     </a>
                     <ul class="submenu <?= ($uri1 == 'Configuration') ? 'active' : '' ?>">
-                        <li class="submenu-item <?= ($uri2 == 'Stations') ? 'active' : '' ?>">
+                        <li class="submenu-item <?= ($uri4 == 'Utilisateurs') ? 'active' : '' ?>">
+                            <a href="/Configuration/Utilisateurs">Utilisateurs</a>
+                        </li>
+                        <li class="submenu-item <?= ($uri4 == 'Stations') ? 'active' : '' ?>">
                             <a href="/Configuration/Stations">Stations</a>
                         </li>
-                        <li class="submenu-item ">
+                        <li class="submenu-item <?= ($uri4 == 'Produits') ? 'active' : '' ?>">
                             <a href="/Configuration/Produits">Produits</a>
                         </li>
-                        <li class="submenu-item ">
+                        <li class="submenu-item <?= ($uri4 == 'Pompes') ? 'active' : '' ?>">
                             <a href="/Configuration/Pompes">Pompes</a>
                         </li>
-                        <li class="submenu-item ">
+                        <li class="submenu-item <?= ($uri4 == 'Reservoirs') ? 'active' : '' ?>">
                             <a href="/Configuration/Reservoirs">Reservoirs</a>
                         </li>
-                        <li class="submenu-item ">
+                        <li class="submenu-item <?= ($uri4 == 'Moyens') ? 'active' : '' ?>">
                             <a href="/Configuration/Moyens">Moyens Paiement</a>
                         </li>
-                        <li class="submenu-item <?= ($uri3 == 'apexcharts') ? 'active' : '' ?>">
+                        <li class="submenu-item <?= ($uri4 == 'Clients') ? 'active' : '' ?>">
                             <a href="/Configuration/Clients">Clients</a>
                         </li>
                     </ul>
@@ -122,6 +124,12 @@ $uri3 = $uri[3] ?? '';
                     <a href="http://www.skatys.com/" class='sidebar-link'>
                         <i class="fas fa-info-circle"></i>
                         <span>Contact</span>
+                    </a>
+                </li>
+                <li class="sidebar-item  ">
+                    <a href="/logout" class='sidebar-link'>
+                    <i class="fas fa-sign-out-alt"></i>
+                        <span>Se déconnecter</span>
                     </a>
                 </li>
 

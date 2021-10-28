@@ -14,8 +14,12 @@ return [
 
     // Registration
     'registerDisabled'          => 'Sorry, new user accounts are not allowed at this time.',
-    'registerSuccess'           => 'Welcome aboard! Please login with your new credentials.',
+    'registerSuccess'           => 'Compte ajouté',
     'registerCLI'               => 'New user created: {0}, #{1}',
+
+    // Deletion 
+    
+    'deletionSuccess'           => 'User was successfully deleted',
 
     // Activation
     'activationNoUser'          => 'Unable to locate a user with that activation code.',
@@ -26,9 +30,9 @@ return [
     'errorSendingActivation'    => 'Failed to send activation message to: {0}',
 
     // Login
-    'badAttempt'                => 'Unable to log you in. Please check your credentials.',
-    'loginSuccess'              => 'Welcome back!',
-    'invalidPassword'           => 'Unable to log you in. Please check your password.',
+    'badAttempt'                => 'Votre login ou mot de passe est incorret.',
+    'loginSuccess'              => 'Bienvenue',
+    'invalidPassword'           => 'Mot de passe incorrect.',
 
     // Forgotten Passwords
     'forgotDisabled'            => 'Reseting password option has been disabled.',
@@ -40,7 +44,7 @@ return [
     'errorResetting'            => 'Unable to send reset instructions to {0}',
 
     // Passwords
-    'errorPasswordLength'       => 'Passwords must be at least {0, number} characters long.',
+    'errorPasswordLength'       => 'Mot de passe doit etre plus de {0, number} charactères.',
     'suggestPasswordLength'     => 'Pass phrases - up to 255 characters long - make more secure passwords that are easy to remember.',
     'errorPasswordCommon'       => 'Password must not be a common password.',
     'suggestPasswordCommon'     => 'The password was checked against over 65k commonly used passwords or passwords that have been leaked through hacks.',
@@ -59,7 +63,8 @@ return [
 
     // Groups
     'groupNotFound'             => 'Unable to locate group: {0}.',
-
+    'groupAdded'                => '{0} successfully added',
+    'groupExists'                => 'Group already exists',
     // Permissions
     'permissionNotFound'        => 'Unable to locate permission: {0}',
 
@@ -68,6 +73,10 @@ return [
 
     // Too many requests
     'tooManyRequests'           => 'Too many requests. Please wait {0, number} seconds.',
+
+    // Update User
+
+    'userRoleUpdated'           => 'User Role was updated to {0}.',
 
     // Login views
     'home'                      => 'Home',

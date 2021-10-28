@@ -1,5 +1,9 @@
 <?php namespace App\Controllers;
 
+use App\Model\Client;
+use App\Model\Produit;
+use App\Model\Station;
+
 class Home extends BaseController
 {
 	public function index()
@@ -10,9 +14,23 @@ class Home extends BaseController
 	public function first_index()
 	{
 		$data["title"] = "Ziz Dashboard";
+		$db = \Config\Database::connect("default");
+
+		$query = $db->query("SELECT count(*) as c from clients");
+		$clients = $query->getRow();
+
+		$query = $db->query("SELECT count(*) as c from stations");
+		$stations = $query->getRow();
+
+		$query = $db->query("SELECT prix from produits where nom = 'Gasoil'");
+		$prix_gasoil = $query->getRow();
+
+		$query = $db->query("SELECT prix from produits where nom = 'SUPER SANS PLOMB'");
+		$prix_sp = $query->getRow();
+
 		// print("hey");
 		// print_r(user()->roles);
-		return view('initial_dashboard/index', $data);
+		return view('initial_dashboard/index', ['clients'=>$clients,'stations'=>$stations,'prix_gasoil'=>$prix_gasoil,'prix_sp'=>$prix_sp]);
 	}
 	public function dashboard()
 	{

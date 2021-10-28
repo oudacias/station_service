@@ -14,7 +14,7 @@ class Recette extends Model
     //protected $returnType     = 'array';
     //protected $useSoftDeletes = true;
 
-    protected $allowedFields = ['reference','valide','cloture','paiements','ventes','consommation_cuves','consommation_volucompteurs','etat','recette_date'];
+    protected $allowedFields = ['station_id','responsable_id','valide','cloture','volucompteur','stock','credit','paiement','ventes_services','depense','diff','recette_date'];
 
     protected $useTimestamps = true;
     // protected $createdField  = 'created_date';

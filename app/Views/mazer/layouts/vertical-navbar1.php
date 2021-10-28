@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="/assets/vendors/bootstrap-icons/bootstrap-icons.css">
     <link rel="stylesheet" href="/assets/css/app.css">
     <?= $this->renderSection('styles') ?>
-    <link rel="shortcut icon" href="/assets/images/favicon.svg" type="image/x-icon">
+    <link rel="shortcut icon" href="/assets/images/logo/logo_ziz1.svg" type="image/x-icon">
     <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css'>
 
 </head>
@@ -28,7 +28,7 @@
                             <i class="bi bi-justify fs-3"></i>
                         </a>
 
-                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        <!-- <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                             data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                             aria-expanded="false" aria-label="Toggle navigation">
                             <span class="navbar-toggler-icon"></span>
@@ -60,7 +60,7 @@
                                     </ul>
                                 </li>
                             </ul>
-                        </div>
+                        </div> -->
                     </div>
                 </nav>
             </header>

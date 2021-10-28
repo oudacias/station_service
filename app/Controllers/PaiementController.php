@@ -21,6 +21,7 @@ class PaiementController extends BaseController
     {
         $moyen = new Moyenpaiement();
         $data = array(
+            'id' => $this->request->getPost('moyen_id'),
             'nom' => $this->request->getPost('nom'),
         );
         $moyen->save($data);
