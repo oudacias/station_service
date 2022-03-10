@@ -135,7 +135,7 @@
                                                                             </div>
                                                                             <label>Stock Initial</label>
                                                                             <div class="form-group">
-                                                                                <input type="number" name="stock_initial" value="<?php echo $reservoir->stock_initial;?>" class="form-control">
+                                                                                <input type="number" step="any" name="stock_initial" value="<?php echo $reservoir->stock_initial;?>" class="form-control">
                                                                             </div>
                                                                             <label>Produit</label>
                                                                             <fieldset class="form-group">

@@ -14,7 +14,7 @@ class Station extends Model
     protected $returnType           = 'array';
     protected $useSoftDeletes       = false;
     protected $protectFields        = true;
-    protected $allowedFields        = ['nom','localisation','reference'];
+    protected $allowedFields        = ['nom','localisation','reference','date_recette'];
 
     // Dates
     protected $useTimestamps        = false;
@@ -27,6 +27,7 @@ class Station extends Model
 
         $found = $this->builder()
         ->select('id,nom')
+        ->orderBy('nom', 'ASC')
         ->get()->getResult();        
 
         return $found;

@@ -32,7 +32,7 @@ class Listeprixproduits extends Migration
             ], 
             'date_prix_fin'   => [
             'type'           => 'DATE',
-            'null' => false
+            'null' => true
             ], 
             'created_at datetime DEFAULT CURRENT_TIMESTAMP',
             'updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP',

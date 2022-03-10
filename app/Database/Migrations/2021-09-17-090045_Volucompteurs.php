@@ -34,6 +34,54 @@ class Volucompteurs extends Migration
             'type'           => 'FLOAT',
             'default' => 0
             ], 
+            'compteur_final1'   => [
+            'type'           => 'FLOAT',
+            'default' => 0
+            ], 
+            'prix_unitaire1'   => [
+            'type'           => 'FLOAT',
+            'default' => 0
+            ], 
+            'compteur_final2'   => [
+            'type'           => 'FLOAT',
+            'default' => 0
+            ], 
+            'prix_unitaire2'   => [
+            'type'           => 'FLOAT',
+            'default' => 0
+            ], 
+            'compteur_final3'   => [
+            'type'           => 'FLOAT',
+            'default' => 0
+            ], 
+            'prix_unitaire3'   => [
+            'type'           => 'FLOAT',
+            'default' => 0
+            ], 
+            'compteur_final4'   => [
+            'type'           => 'FLOAT',
+            'default' => 0
+            ], 
+            'prix_unitaire4'   => [
+            'type'           => 'FLOAT',
+            'default' => 0
+            ], 
+            'compteur_final5'   => [
+            'type'           => 'FLOAT',
+            'default' => 0
+            ], 
+            'prix_unitaire5'   => [
+            'type'           => 'FLOAT',
+            'default' => 0
+            ], 
+            'compteur_final6'   => [
+            'type'           => 'FLOAT',
+            'default' => 0
+            ], 
+            'prix_unitaire6'   => [
+            'type'           => 'FLOAT',
+            'default' => 0
+            ], 
             'recette_id'   => [
             'type'           => 'INT',
             'null' => true

@@ -4,7 +4,7 @@
             <p>2021 &copy; Skatys</p>
         </div>
         <div class="float-end">
-            <p>Version Test V1.0</p>
+            <p>Version Test V2.0</p>
         </div>
     </div>
 </footer>

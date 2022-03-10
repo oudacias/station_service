@@ -19,14 +19,18 @@
                                         <table class="table table-striped" id="table1">
                                             <thead>
                                                 <tr>
-                                                    <th>ID</th>
                                                     <th>Station</th>
-                                                    <th>Recette Brut</th>
-                                                    <th>Montant a déduire</th>
-                                                    <th>Recette NET</th>
+                                                    <!-- <th>Recette Brute</th>
+                                                    <th>Total credits</th>
+                                                    <th>Recette NET</th> -->
                                                     <th>Date de Recette</th>
                                                     <th>Modifier</th>
+                                                    <th>Valider</th>
+                                                    <th>Voir</th>
+                                                    <th>Date Saisie</th>
+                                                    <th>Date Validation</th>
                                                     <th>Rapport</th>
+                                                    <th>Documents</th>
                                                     <!-- <th>Rapport 2</th> -->
                                                 </tr>
                                             </thead>
@@ -35,15 +39,25 @@
                                                     foreach($recettes as $recettes){                
                                                 ?>
                                                 <tr>
-                                                    <td class="text-bold-500"><?php echo $recettes->recette_id;?></td>
                                                     <td><?php echo $recettes->station_nom;?></td>
-                                                    <td class="text-bold-500"><?php echo round($recettes->recette_brutte,2);?></td>
-                                                    <td class="text-bold-500"><?php echo round($recettes->montant_a_deduire,2);?></td>
-                                                    <td class="text-bold-500"><?php echo round(($recettes->recette_brutte - $recettes->montant_a_deduire),2);?></td>
+                                                    <!-- <td class="text-bold-500"><?php //echo round($recettes->recette_brutte,2);?></td>
+                                                    <td class="text-bold-500"><?php //echo round($recettes->montant_a_deduire,2);?></td>
+                                                    <td class="text-bold-500"><?php //echo round(($recettes->recette_brutte - $recettes->montant_a_deduire),2);?></td> -->
                                                     <td class="text-bold-500"><?php echo $recettes->recette_date;?></td>
-                                                    <td><a href="/Recettes/editRecette/<?php echo $recettes->recette_id; ?>"><i class="fas fa-pen-square"></a></td>
+                                                    <?php if($recettes->valide == False) { ?>
+                                                        <td><a href="/Recettes/editRecette/<?php echo $recettes->recette_id; ?>"><i class="fas fa-pen-square"></a></td>
+                                                        <td><a href="/Recettes/validateRecette/<?php echo $recettes->recette_id; ?>"><i class="far fa-check-square"></i></a></td>
+                                                    <?php }else{ ?>
+                                                        <td><i class="fas fa-ban"></i></a></td>
+                                                        <td><i class="fas fa-ban"></i></a></td>
+                                                    <?php } ?>
+                                                    
+                                                    <td><a href="/Recettes/voirRecette/<?php echo $recettes->recette_id; ?>"><i class="far fa-eye"></i></a></td>
+                                                    <td><?php echo $recettes->created_at; ?></td>
+                                                    <td><?php echo $recettes->validation_date; ?></td>
                                                     <td class="text-bold-500"><a href="/PdfController/Rapport/<?php echo $recettes->recette_id ?>">Rapport</td>
                                                     <!-- <td class="text-bold-500"><a href="/PdfController/Rapport/<?php //echo $recettes->recette_id ?>">Rapport</td> -->
+                                                    <td><i class="fas fa-download"></i></td>
                                                 </tr>
                                                 <?php 
                                                     } 

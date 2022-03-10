@@ -62,6 +62,10 @@ class Recette extends Migration
             'type'           => 'date',
             'null' => false
             ],
+            'validation_date'   => [
+            'type'           => 'DATETIME',
+            'null' => true
+            ],
             
             'created_at datetime DEFAULT CURRENT_TIMESTAMP',
             'updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP',

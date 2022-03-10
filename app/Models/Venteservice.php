@@ -14,7 +14,7 @@ class Venteservice extends Model
     protected $returnType           = 'array';
     protected $useSoftDeletes       = false;
     protected $protectFields        = true;
-    protected $allowedFields        = ['produit_id','qt','type_paiement','montant','recette_id','valide','cloture'];
+    protected $allowedFields        = ['produit_id','qt','type_paiement','montant','immatricule','recette_id','valide','cloture'];
 
     // Dates
     protected $useTimestamps        = false;

@@ -17,6 +17,8 @@
 
 					<form action="<?= route_to('login') ?>" method="post">
 						<?= csrf_field() ?>
+						<input type="hidden" name="station_id">
+
 
 <?php if ($config->validFields === ['email']): ?>
 						<div class="form-group">

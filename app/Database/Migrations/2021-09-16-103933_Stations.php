@@ -22,6 +22,10 @@ class Stations extends Migration
             'type'           => 'TEXT',
             'null' => true
             ],
+            'date_recette'   => [
+            'type'           => 'DATE',
+            'null' => false
+            ],
             'created_at datetime DEFAULT CURRENT_TIMESTAMP',
             'updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP',
         ]);

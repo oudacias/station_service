@@ -14,7 +14,7 @@ class Creditclient extends Model
     protected $returnType           = 'array';
     protected $useSoftDeletes       = false;
     protected $protectFields        = true;
-    protected $allowedFields        = ['recette_id','client_id','produit_id','reference','qt','montant'];
+    protected $allowedFields        = ['recette_id','client_id','produit_id','reference','qt','montant','solde_libre'];
 
     // Dates
     protected $useTimestamps        = false;

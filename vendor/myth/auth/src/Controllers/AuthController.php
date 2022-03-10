@@ -6,6 +6,7 @@ use Myth\Auth\Config\Auth as AuthConfig;
 use Myth\Auth\Entities\User;
 use Myth\Auth\Models\UserModel;
 use App\Models\userInfo;
+use App\Models\Station;
 
 class AuthController extends Controller
 {
@@ -96,11 +97,29 @@ class AuthController extends Controller
 		{
 			return redirect()->to(route_to('reset-password') .'?token='. $this->auth->user()->reset_hash)->withCookies();
 		}
+		
 
-		$redirectURL = session('redirect_url') ?? site_url('/');
-		unset($_SESSION['redirect_url']);
-
-		return redirect()->to($redirectURL)->withCookies()->with('message', lang('Auth.loginSuccess'));
+		if(user()->roles[array_key_first(user()->roles)] == 'controleur' and empty($this->request->getPost('station_id'))){
+			// $redirectURL = session('redirect_url') ?? site_url('/');
+			// unset($_SESSION['redirect_url']);
+			// $moyen = new Moyenpaiement($db);
+        	// $moyens = $moyen->findAll();
+			$this->auth->logout();
+			$station = new Station();
+			$stations = $station->find();
+			return view('login2', ['stations'=>$stations,'login'=> $login, 'password'=> $password]);
+			
+		}else{
+			if(user()->roles[array_key_first(user()->roles)] == 'controleur')
+			{
+				$session = session();
+				$session->set('station_id', $this->request->getPost('station_id'));
+				echo ($_SESSION['station_id']);
+			}
+			$redirectURL = session('redirect_url') ?? site_url('/');
+			unset($_SESSION['redirect_url']);	
+			return redirect()->to($redirectURL)->withCookies()->with('message', lang('Auth.loginSuccess'));
+		}
 	}
 
 	/**
@@ -111,6 +130,9 @@ class AuthController extends Controller
 		if ($this->auth->check())
 		{
 			$this->auth->logout();
+		}
+		if(isset($_SESSION['station_id'])){
+			unset($_SESSION['station_id']);
 		}
 
 		return redirect()->to(site_url('/'));

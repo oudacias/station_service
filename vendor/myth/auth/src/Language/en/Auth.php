@@ -26,7 +26,7 @@ return [
     'activationSubject'         => 'Activate your account',
     'activationSuccess'         => 'Please confirm your account by clicking the activation link in the email we have sent.',
     'activationResend'          => 'Resend activation message one more time.',
-    'notActivated'              => 'This user account is not yet activated.',
+    'notActivated'              => 'Ce compte n\'est pas encore activé.',
     'errorSendingActivation'    => 'Failed to send activation message to: {0}',
 
     // Login
@@ -76,7 +76,7 @@ return [
 
     // Update User
 
-    'userRoleUpdated'           => 'User Role was updated to {0}.',
+    'userRoleUpdated'           => 'Role est modifié avec succès',
 
     // Login views
     'home'                      => 'Home',

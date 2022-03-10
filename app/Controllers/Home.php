@@ -22,10 +22,24 @@ class Home extends BaseController
 		$query = $db->query("SELECT count(*) as c from stations");
 		$stations = $query->getRow();
 
-		$query = $db->query("SELECT prix from produits where nom = 'Gasoil'");
-		$prix_gasoil = $query->getRow();
+		
 
-		$query = $db->query("SELECT prix from produits where nom = 'SUPER SANS PLOMB'");
+		$query = $db->query("SELECT liste.prix as prix
+								FROM produits p 
+								LEFT JOIN listeprixproduits liste ON p.id = liste.produit_id 
+								WHERE liste.created_at in (select max(created_at) FROM listeprixproduits GROUP BY produit_id,type)  
+								AND  p.nom = 'Gasoil'								
+								ORDER BY p.categorie;");
+		$prix_gasoil = $query->getRow();
+		
+
+		$query = $db->query("SELECT liste.prix as prix
+								FROM produits p 
+								LEFT JOIN listeprixproduits liste ON p.id = liste.produit_id 
+								WHERE liste.created_at in (select max(created_at) FROM listeprixproduits GROUP BY produit_id,type)  
+								AND  p.nom = 'SUPER SANS PLOMB'								
+								ORDER BY p.categorie;");
+								
 		$prix_sp = $query->getRow();
 
 		// print("hey");

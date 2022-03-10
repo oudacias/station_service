@@ -51,7 +51,7 @@ class LocalAuthenticator extends AuthenticationBase implements AuthenticatorInte
                 'login' => urlencode($credentials['email'] ?? $credentials['username'])
             ]);
 
-            $this->error = lang('Auth.notActivated') .' '. anchor(route_to('resend-activate-account').'?'.$param, lang('Auth.activationResend'));
+            $this->error = lang('Auth.notActivated');
 
             $this->user = null;
             return false;

@@ -30,6 +30,10 @@ class Venteservices extends Migration
             'type'           => 'FLOAT',
             'default' => 0
             ], 
+            'immatricule'   => [
+            'type'           => 'TEXT',
+            'default' => 0
+            ], 
             'recette_id'   => [
             'type'           => 'INT',
             'null' => false

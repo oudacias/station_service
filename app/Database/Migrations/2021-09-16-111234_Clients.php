@@ -34,6 +34,14 @@ class Client extends Migration
             'type'           => 'FLOAT',
             'null' => true
             ],
+            'solde_libre'  => [
+            'type'           => 'FLOAT',
+            'null' => true
+            ],
+            'solde_libre_actif'         => [
+            'type'           => 'boolean',
+            'default'        => false
+            ],
             'station_id'  => [
             'type'           => 'INT',
             'null' => true

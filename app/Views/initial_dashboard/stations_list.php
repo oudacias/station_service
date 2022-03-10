@@ -7,7 +7,7 @@
             <div class="card-header">
                 <h4 class="card-title">Liste des Stations</h4>
             </div>
-            <?php if (in_groups(['admin_central'])) { ?>
+            <?php if (in_groups(['admin'])) { ?>
                 <div class="col-12 d-flex justify-content-left ">
                                     
                     <button type="button" class="btn btn-outline-primary mx-lg-4" data-bs-toggle="modal"
@@ -40,6 +40,10 @@
                                     <div class="form-group">
                                         <input type="text" name="localisation" class="form-control">
                                     </div>
+                                    <label>Date Première recette</label>
+                                    <div class="form-group">
+                                        <input type="date" name="date_recette" value="<?php echo date("Y-m-d") ?>" class="form-control">
+                                    </div>
                                 </div>
                                 <div class="col-12 d-flex justify-content-center">
                                     <div class="modal-footer ">
@@ -70,7 +74,7 @@
                                     <!-- table hover -->
                                     <div class="table-responsive">
                                         <table class="table table-striped" id="table1">
-                                            <thead>  <?php echo user_id() ?>
+                                            <thead>
                                                 <tr>
                                                     <th>ID</th>
                                                     <th>Nom</th>

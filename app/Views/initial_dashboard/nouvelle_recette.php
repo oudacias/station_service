@@ -14,12 +14,12 @@
                 <?php if(isset($latest_recette)) { ?>
                     <h4 style="text-align: center" class="card-title">Nouvelle Recette <?php echo date('Y-m-d', strtotime($latest_recette->recette_date . ' +1 day')); ?></h4>
                 <?php }else{ ?>
-                    <h4 style="text-align: center" class="card-title">Nouvelle Recette</h4>
+                    <h4 style="text-align: center" class="card-title">Nouvelle Recette !</h4>
 
                     <?php } ?>
             </div>
             <div class="card-body">
-                <form method="post" action=<?php echo site_url('Ajouter_Recette') ?>>
+                <form method="post" action=<?php echo site_url('Ajouter_Recette') ?>  enctype="multipart/form-data">
                     <div class="row d-flex justify-content-between align-items-center">
                         <div class="col-sm-4">
                             <h8>Date de recette</h8>
@@ -34,6 +34,13 @@
                                     <i class="bi bi-calendar"></i>
                                 </div>
                             </div>
+
+                                <?php if(!isset($latest_recette)) { ?>
+                                    <h8>Cumul du Mois <i></i> des ventes CA</h8>
+                                    <div class="form-group position-relative has-icon-left">
+                                        <input type="text" min="0" name="cumul_station" class="form-control" autocomplete="off" required>
+                                    </div>
+                                <?php } ?>
                             <div class="col-12 d-flex justify-content-center">
                                 <button type="submit" class="btn btn-success me-1 mb-1">Ajouter</button>
                             </div>
@@ -113,7 +120,7 @@
                                     <div class="tab-content" id="myTabContent">
                                         <div class="tab-pane fade show active" id="volucompteur" role="tabpanel" aria-labelledby="volucompteur-tab">
                                             <div class="table-responsive">
-                                                <table class="table table-striped" id="table1">
+                                                <table class="table table-striped" id="table10">
                                                     <thead>
                                                         <tr>
                                                             <th>Pompe</th>
@@ -123,32 +130,337 @@
                                                             <th>Compteur Final</th>
                                                             <th>Sortie</th>
                                                             <th>CA</th>
+                                                            <th></th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         <?php if($volucompteurs){
+                                                            $index = 0;
                                                             foreach($volucompteurs as $volucompteur){   
-                                                                             
                                                         ?>
-                                                        <tr>
+                                                        <tr id="<?php echo $index.'#'.preg_replace('/\s+/', '', $volucompteur->pr_nom) ?>" class="row_<?php echo preg_replace('/\s+/', '', $volucompteur->pr_nom) ?>">
                                                             <td class="text-bold-500"><?php echo $volucompteur->p_nom; ?></td>
                                                             <td><?php echo $volucompteur->pr_nom; ?></td>
                                                             <td class="text-bold-500"><input type="number" id="prix<?php echo $volucompteur->pompe_ids; ?>" name="volu_prix[]" value="<?php echo $volucompteur->pr_prix; ?>" readonly/>
                                                             <input type="hidden" name="pr_ids[]" value="<?php echo $volucompteur->pr_ids; ?>" readonly/>
                                                             <input type="hidden" name="pompe_ids[]" value="<?php echo $volucompteur->pompe_ids; ?>" readonly/>
-                                                            <td><input type="number" id="compteur_initial<?php echo $volucompteur->pompe_ids; ?>" name="compteur_initial[]" value="<?php echo round($volucompteur->compteur_final,2); ?>" readonly/></td>
-                                                            <td><input type="text" id="compteur_final<?php echo $volucompteur->pompe_ids; ?>" onchange="volucompteur(<?php echo $volucompteur->pompe_ids; ?>)" name="compteur_final[]" value="<?php echo round($volucompteur->compteur_final,2); ?>" min="<?php echo $volucompteur->compteur_final; ?>" step="any"></td>
+                                                            <td><input type="text" id="compteur_initial<?php echo $volucompteur->pompe_ids; ?>" name="compteur_initial[]" value="<?php echo round($volucompteur->max_volucompteur_final,2); ?>" <?php if(isset($latest_recette)){ ?> readonly <?php } ?>/></td>
+                                                            <td><input type="text" id="compteur_final<?php echo $volucompteur->pompe_ids; ?>" onchange="volucompteur(<?php echo $volucompteur->pompe_ids; ?>)" name="compteur_final[]" value="<?php echo round($volucompteur->max_volucompteur_final,2); ?>" min="<?php echo $volucompteur->compteur_final; ?>" step="any"></td>
                                                             <td><input class="c_stock-<?php echo $volucompteur->reservoir_id ?>-<?php echo str_replace(' ', '',$volucompteur->pr_nom); ?>" type="number" id="sortie<?php echo $volucompteur->pompe_ids; ?>" name="sortie[]" value="0" onchange="stock_sortie(<?php echo $volucompteur->reservoir_id; ?>,'<?php echo $volucompteur->pr_nom; ?>')" disabled/></td>
                                                             <td><input type="number" id="ca<?php echo $volucompteur->pompe_ids; ?>" name="ca[]" value="0" disabled="disabled" /></td>
+                                                            <td><i class="fas fa-plus" class="btn btn-outline-success" data-bs-toggle="modal"
+                                                            data-bs-target="#exampleModalLong<?php echo $volucompteur->pompe_ids; ?>"></i></td>
+                                                            <td><input type="hidden" value="<?php echo $volucompteur->reservoir_id ?>"></td>
+                                                        
+                                                            <!--login form Modal -->
+                                                            <div class="modal fade" id="exampleModalLong<?php echo $volucompteur->pompe_ids; ?>" tabindex="-1"  aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                                                                <div class="modal-dialog">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-body">
+                                                                            <div class="modal-body">
+                                                                                <label>Nouveau Prix <?php echo $volucompteur->pr_nom ?></label>
+                                                                                <div class="form-group">
+                                                                                    <input id="new_price<?php echo $volucompteur->pompe_ids; ?>" min="1" type="text" name="new_price" class="form-control">
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-12 d-flex justify-content-center">
+                                                                                <div class="modal-footer ">
+                                                                                    <button type="button" class="btn btn-primary ml-1" onclick="add_price('<?php echo preg_replace('/\s+/', '', $volucompteur->pr_nom); ?>','<?php echo $volucompteur->pompe_ids; ?>')"
+                                                                                        data-bs-dismiss="modal">
+                                                                                        <i class="bx bx-x d-block d-sm-none"></i>
+                                                                                        <span class="d-none d-sm-block">Ajouter</span>
+                                                                                    </button>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </tr>
-                                                        <?php 
+                                                        <?php  
+                                                            $index ++;
+
                                                             } 
                                                         }
                                                         ?>
                                                     </tbody>
                                                 </table>
                                             </div>
+                                            <script>
+                                                $b = 0;
+                                                var class_click = [];
+                                                var $n_class = 1
+                                                
+                                                
+
+
+                                                function add_price(i,pompe){
+                                                    var class_array = [];
+                                                    var $new_price = $("#new_price"+pompe).val()
+                                                    // alert($new_price)
                                                     
+                                                    $j = 0;
+                                                    $c=0;
+                                                    $y = 0;
+                                                    $new_id = 0;
+
+                                                    $r = 0;
+
+                                                    var array = [];
+                                                    $( "tr[class^='row_']" ).each(function(){
+                                                        if(jQuery.inArray(this.className, class_array) == -1){
+                                                            class_array.push(this.className)
+                                                            array.push({
+                                                                class: this.className,
+                                                                number: 1
+                                                            });
+                                                                                                                        
+                                                        }else{
+                                                            array[class_array.indexOf(this.className)]["number"] += 1
+                                                        }
+                                                    });
+
+                                                    if(class_click.some(class_clicks => class_clicks.class === i)){
+                                                        let obj1 = class_click.find(o => o.class === i);
+                                                        obj1.clicks ++
+                                                    }else{
+                                                        class_click.push({
+                                                            class: i,
+                                                            clicks: 1
+                                                        });
+                                                    }
+                                                    
+                                                    
+                                                    
+                                                    // console.log(class_array['row_'+i])
+                                                   
+
+
+                                                    $('.row_'+i).each(function(){
+                                                        var $f = $(this).find('td').eq(4).find('input').attr('id')
+                                                        // console.log($f)
+                                                        $( "#"+$f ).prop( "readonly", true );
+                                                    });
+
+                                                    for (var v = class_array.indexOf('row_'+i); v < class_array.length; v++){
+                                                        $('.'+class_array[v]).each(function(index , value){
+                                                            if( index == 0 && (value.id).split('#')[1] == i){
+                                                            }else{
+                                                                
+                                                                if(array[class_array.indexOf(class_array[v])]["number"] > 1 &&  class_array[v].split('_')[1] == i){
+                                                                    $new_id = (parseInt((this.id).split('#')[0]) + 1 + $y)
+                                                                    this.id = $new_id  + "#" +  this.id.split('#')[1]
+                                                                    $y++
+                                                                    // console.log(class_array[v])
+                                                                    // console.log($("."+class_array[v]).find('td').eq(4).find('input').attr('id'))
+                                                                    // console.log(document.getElementsByClassName(class_array[v]).closest('tr'))
+                                                                }else if(array[class_array.indexOf(class_array[v])]["number"] == 1 ||  class_array[v].split('_')[1] != i){
+                                                                    $new_id = (parseInt((this.id).split('#')[0]) + $y + 1)
+                                                                    
+                                                                    this.id = $new_id  + "#" +  this.id.split('#')[1]
+                                                                }   
+                                                            }
+                                                        });
+                                                    }
+                                                    var obj = class_click.find(o => o.class === i);
+
+                                                    // console.log($('#table10 tr').eq(6).find('td').eq(0).text())
+
+                                                    // console.log(obj.clicks);
+                                                    $('.row_'+i).each(function(){
+                                                       
+
+                                                        var uu;
+                                                        var volucompteur;
+                                                        var reservoir;
+                                                        var $row_id;
+                                                        $r = parseInt((this.id).split('#')[0])
+                                                        $row_id = parseInt($r +obj.clicks)
+                                                        // console.log($r)
+                                                        // console.log(this.id)
+
+
+                                                        $ff =  $('.row_' + i).eq($r).attr('id')
+
+
+                                                        
+                                                        $('.sub_'+$r+ "_" +$n_class).each(function(){
+                                                            $n_class ++
+                                                            
+                                                        });
+                                                        console.log()
+                                                        console.log($n_class)
+
+                                                        
+                                                        $uu = $('#table10 tr').eq($row_id).find('td').eq(4).find('input').val()
+
+
+                                                        // $volucompteur = $('#table10 tr').eq(parseInt($row_id)).find('td').eq(1).text()
+                                                        // $reservoir = $('#table10 tr').eq(parseInt($row_id)).find('td').eq(8).find('input').val()
+                                                        // console.log($('#table10 tr').eq(parseInt($r)).find('td').eq(8).find('input').val())
+                                                        $reservoir =  $('#table10 tr').eq(parseInt($r+1)).find('td').eq(8).find('input').val()
+                                                        $volucompteur = $('#table10 tr').eq(parseInt($r+1)).find('td').eq(1).text()
+                                                        $pompe_id = $('#table10 tr').eq(parseInt($r+1)).find('td').eq(2).find('input').eq(2).val()
+                                                        
+                                                        
+                                                        var html =`<tr class ="sub_` + $r+ "_" +$n_class+`"><td></td>
+                                                        <td></td>
+                                                        <td><input name="sub_volu_prix_`+$n_class+`[]" id="1prix`+$row_id+`" type="text" value="`+$new_price+`" class="prix_`+$volucompteur.replace(/\s/g,'')+`_`+obj.clicks+`" onchange="inter_vol(`+$row_id+`);trial(this)" readonly></td>
+                                                        <td><input name="sub_compteur_initial[]" id="1compteur_initial`+$row_id+`" type="text" value="`+$uu+`" onchange="inter_vol(`+$row_id+`)"></td>
+                                                        <td><input name="sub_compteur_final_`+$n_class+`[]" id="1compteur_final`+$row_id+`" type="text" value="`+$uu+`" onchange="inter_vol(`+$row_id+`)"></td> 
+                                                        <td><input class="c_stockB-`+$reservoir+`-`+$volucompteur.replace(/\s/g,'')+`" id="1sortie`+$row_id+`" type="text" onchange="stock_sortie(`+$reservoir+`,'`+$volucompteur.replace(/\s/g,'')+`')" value="0" readonly></td>
+                                                        <td><input id="1ca`+$row_id+`" type="text" value="0" readonly></td>
+                                                        <td><input name="sub_pompe_id[]" type="hidden" value="`+$pompe_id+`" readonly></td>
+                                                        
+                                                        
+                                                        <td></td></tr>
+                                                        `;
+                                                        $('#table10 > tbody > tr').eq($r + obj.clicks).before(html);
+0
+                                                        
+                                                        
+                                                    });
+
+                                                    if(class_array[class_array.length - 1] == 'row_' + i){
+                                                        var uu;
+                                                        var volucompteur;
+                                                        var reservoir;
+                                                        var $row_id;
+                                                        var lastid = $('.row_' + i).last().attr('id');
+                                                        console.log(lastid)
+
+                                                        $r = parseInt(lastid.split('#')[0])
+                                                        $row_id = parseInt($r + obj.clicks)
+                                                        // console.log($r  + 1)
+
+                                                        $reservoir =  $('#table10 tr').eq(parseInt($r+1)).find('td').eq(8).find('input').val()
+                                                        $volucompteur = $('#table10 tr').eq(parseInt($r+1)).find('td').eq(1).text()
+                                                        $pompe_id = $('#table10 tr').eq(parseInt($r+1)).find('td').eq(2).find('input').eq(2).val()
+
+
+
+                                                        
+                                                        $uu = $('#table10 tr').eq($row_id).find('td').eq(4).find('input').val()
+
+                                                       
+
+                                                        // $volucompteur = $('#table10 tr').eq(parseInt($row_id)).find('td').eq(1).text()
+                                                        // $reservoir = $('#table10 tr').eq(parseInt($row_id)).find('td').eq(8).find('input:hidden').val()
+                                                        // $pompe_id = $('#table10 tr').eq($row_id).find('td').eq(2).find('input').eq(2).val()
+                                                        // var $vv = $("#1compteur_initial"+parseFloat(id)).closest('tr').next('tr').find('td').eq(3).find('input').attr('id')
+
+
+                                                        
+
+                                                        
+                                                        var html =`<tr><td></td>
+                                                        <td></td>
+                                                        <td><input id="1prix`+$row_id+`" type="text" value="0" onchange="inter_vol(`+$row_id+`)"></td>
+                                                        <td><input name="sub_compteur_initial[]" id="1compteur_initial`+$row_id+`" type="text" value="`+$uu+`" onchange="inter_vol(`+$row_id+`)"></td>
+                                                        <td><input name="sub_compteur_final[]" id="1compteur_final`+$row_id+`" type="text" value="`+$uu+`" onchange="inter_vol(`+$row_id+`)"></td> 
+                                                        <td><input class="c_stockB-`+$reservoir+`-`+$volucompteur.replace(/\s/g,'')+`" id="1sortie`+$row_id+`" type="text" onchange="stock_sortie(`+$reservoir+`,'`+$volucompteur.replace(/\s/g,'')+`')" value="0" readonly></td>
+                                                        <td><input id="1ca`+$row_id+`" type="text" value="0" readonly></td>
+                                                        <td><input name="sub_pompe_id[]" type="hidden" value="`+$pompe_id+`" readonly></td>
+ 
+                                                        
+                                                        
+                                                        <td></td></tr>
+                                                        `;
+                                                        $("#table10").append(html);
+                                                    }
+
+                                                }
+
+                                                
+
+                                                
+                                                // function trial(pp,product,clicks){
+                                                //     console.log(pp)
+                                                //     // $('.prix_'+product+'_'+clicks)each(function(){
+
+                                                //     // })
+                                                // }
+
+
+
+                                                function inter_vol(id) {
+                                                    var $ca_volucompteur1 = 0
+                                                    var result1 = 0
+                                                    var ca1 = 0
+                                                    console.log("ppp")
+                                                    // var class_array = [];
+
+                                                    // $( "tr[class^='row_']" ).each(function(){
+                                                    //     if(jQuery.inArray(this.className, class_array) == -1){
+                                                    //         class_array.push(this.className)
+                                                                                                                    
+                                                    //     }
+                                                    // });
+                                                    // console.log(class_array)
+                                                    // console.log(id)
+                                                    // var obj = class_click.find(o => o.class === id);
+
+                                                    // alert(obj)
+
+                                                    // $('.prix_'+id)each(function(){
+
+                                                    // })
+
+                                                    if(parseFloat($("#1compteur_final"+id).val()) >= parseFloat($("#1compteur_initial"+id).val())){
+                                                        $compteur_initial1 = $("#1compteur_initial"+id).val();
+                                                        $compteur_final1 = $("#1compteur_final"+id).val();
+
+                                                        $result1 = ($compteur_final1 - $compteur_initial1).toFixed(2)
+ 
+                                                        $("#1sortie"+id).val($result1).change()
+
+                                                        ca1 = $result1 * $("#1prix"+id).val()
+                                                        $("#1ca"+id).val( ca1.toFixed(2));
+
+                                                        $( "input[id^='1ca']" ).each(function(){
+                                                            if(!isNaN(parseFloat($(this).val()))) {
+                                                                $ca_volucompteur1 += parseFloat($(this).val());
+                                                            }
+                                                            
+                                                        })
+                                                        $( "input[id^='ca']" ).each(function(){
+                                                            $ca_volucompteur1 += parseFloat($(this).val());
+                                                            
+                                                        })
+
+                                                        $ca_volucompteur1 = $ca_volucompteur1.toFixed(2)
+
+                                                        $("#somme_ca").val($ca_volucompteur1)
+
+                                                        $("#total_volucompteur_header").html($ca_volucompteur1)
+
+                                                        var control_ca1 = 0
+
+                                                        control_ca1  = parseFloat($("#total_volucompteur_header").html()) - parseFloat($("#total_credit_header").html()) - parseFloat($("#total_paiement_header").html())
+                                                        $("#control_ca").html(control_ca1)
+                                                        // var vv = document.getElementById("compteur_initial"+parseFloat(id))
+                                                        // console.log(vv.closest('tr').eq(2))
+                                                        // console.log("#1compteur_initial"+parseFloat(id))
+                                                        var $vv = $("#1compteur_initial"+parseFloat(id)).closest('tr').next('tr').find('td').eq(3).find('input').attr('id')
+                                                        // console.log($vv)
+                                                        // var nextId = $('#'+first_tr_id ).next("tr").attr("id");
+
+                                                        // console.log($("#1compteur_initial"+parseFloat(id)).closest('tr').find('td').eq(3).find('input').val())
+                                                        // console.log($("#1compteur_initial"+parseFloat(id)).closest('tr'))
+                                                        if(typeof $vv != 'undefined'){
+                                                            if($vv.startsWith("1compteur")) {
+                                                                $("#"+$vv).val($("#1compteur_final"+id).val()).change()
+                                                            }
+                                                        }
+
+                                                    }else if(parseFloat($("#1compteur_final"+id).val()) < parseFloat($("#1compteur_initial"+id).val())){
+
+                                                        alert("Compteur Final doit etre superieur");
+                                                        $("#1compteur_final"+id).val($("#1compteur_initial"+id).val()).change();
+                                                    }  
+                                                }
+
+                                            </script>
                                             <div class="col-12 d-flex justify-content-end">
                                                 <div class="form-group">
                                                     <input type="text" id="somme_ca" value="Somme :      " class="form-control" disabled>
@@ -217,16 +529,22 @@
                                             </div>
                                             <br>
                                             <br>
-                                            <div class="col-12">             
-                                                <button type="button" class="btn btn-outline-success" data-bs-toggle="modal"
-                                                    data-bs-target="#exampleModalLong">
-                                                    Ajouter Crédit
-                                                </button>
-                                            </div>
+                                            <!-- <div class="row"> -->
+                                                <div class="col-3">             
+                                                    <button type="button" class="btn btn-outline-success" style="width:70%" data-bs-toggle="modal"
+                                                        data-bs-target="#exampleModalLong00">
+                                                        Ajouter Crédit
+                                                    </button>
+                                                </div>
+                                                <div class="col-3">     
+                                                    <input type="file" name="credit_documents[]" id="upload" hidden multiple/>
+                                                    <label class="label" for="upload"  style="width:70%"><i class="fas fa-file-upload"></i>  Importer fichers</label>               
+                                                </div>
+                                                    <!-- </div> -->
                                             <br>
                                             <br>
                                             <!--login form Modal -->
-                                            <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                                            <div class="modal fade" id="exampleModalLong00" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
@@ -311,16 +629,21 @@
                                             </div>
                                             <br>
                                             <br>
-                                            <div class="col-12">             
+                                            <div class="col-3">             
                                                 <button type="button" class="btn btn-outline-success" data-bs-toggle="modal"
-                                                    data-bs-target="#exampleModalLong6">
+                                                    data-bs-target="#exampleModalLong01" style="width:70%">
                                                     Ajouter Paiement
                                                 </button>
                                             </div>
+                                            <div class="col-3">     
+                                                <input type="file" name="paiement_documents[]" id="upload" hidden multiple/>
+                                                <label class="label" for="upload"  style="width:70%"><i class="fas fa-file-upload"></i>  Importer fichers</label>               
+                                            </div>
+                                            
                                             <br>
                                             <br>
                                             <!--login form Modal -->
-                                            <div class="modal fade" id="exampleModalLong6" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle6" aria-hidden="true">
+                                            <div class="modal fade" id="exampleModalLong01" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle6" aria-hidden="true">
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
@@ -392,8 +715,9 @@
                                                     <thead>
                                                         <tr>
                                                             <th>Produit</th>
-                                                            <th>Type de paiement</th>
+                                                            <th>Montant</th>
                                                             <th>Quantité</th>
+                                                            <th>Immatricule</th>
                                                             <th>Total</th>
                                                             <th>ACTION</th>
                                                         </tr>
@@ -405,16 +729,20 @@
                                             </div>
                                             <br>
                                             <br>
-                                            <div class="col-12">             
+                                            <div class="col-3">             
                                                 <button type="button" class="btn btn-outline-success" data-bs-toggle="modal"
-                                                    data-bs-target="#exampleModalLong1">
+                                                    data-bs-target="#exampleModalLong02" style="width:70%">
                                                     Ajouter Vente Service
                                                 </button>
+                                            </div>
+                                            <div class="col-3">     
+                                                <input type="file" name="v_s_documents[]" id="upload" hidden multiple/>
+                                                <label class="label" for="upload"  style="width:70%"><i class="fas fa-file-upload"></i>  Importer fichers</label>               
                                             </div>
                                             <br>
                                             <br>
                                             <!--login form Modal -->
-                                            <div class="modal fade" id="exampleModalLong1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle1" aria-hidden="true">
+                                            <div class="modal fade" id="exampleModalLong02" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle1" aria-hidden="true">
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
@@ -436,14 +764,22 @@
                                                                             <?php } } ?>
                                                                         </select>
                                                                     </fieldset>
-                                                                    <label>Type</label>
+                                                                    <!-- <label>Type</label>
                                                                     <fieldset class="form-group">
                                                                         <select class="form-select" id="select_paiement_v_s" name="type_paiement_v_s">
-                                                                            <?php foreach($moyens as $moyen){ ?>
-                                                                                <option value="<?php echo $moyen['id'] ?>"> <?php echo $moyen['nom'] ?></option>
-                                                                            <?php } ?>
+                                                                            <?php //foreach($moyens as $moyen){ ?>
+                                                                                <option value="<?php //echo $moyen['id'] ?>"> <?php //echo $moyen['nom'] ?></option>
+                                                                            <?php //} ?>
                                                                         </select>
-                                                                    </fieldset>
+                                                                    </fieldset> -->
+                                                                    <label>Montant</label>
+                                                                    <div class="form-group">
+                                                                        <input type="text" name="v_s_montant" class="form-control" value="0" required>
+                                                                    </div>
+                                                                    <label>Immatricule</label>
+                                                                    <div class="form-group">
+                                                                        <input type="text" name="v_s_immatricule" class="form-control" value="0" required>
+                                                                    </div>
                                                                     <label>Quantité</label>
                                                                     <div class="form-group">
                                                                         <input type="number" name="v_s_qte" class="form-control" value="0" required>
@@ -475,7 +811,7 @@
                                                     <thead>
                                                         <tr>
                                                             <th>Produit</th>
-                                                            <th>Type de paiement</th>
+                                                            <!-- <th>Type de paiement</th> -->
                                                             <th>Quantité</th>
                                                             <th>Detail</th>
                                                             <th>Total</th>
@@ -489,16 +825,20 @@
                                             </div>
                                             <br>
                                             <br>
-                                            <div class="col-12">             
+                                            <div class="col-3">             
                                                 <button type="button" class="btn btn-outline-success" data-bs-toggle="modal"
-                                                    data-bs-target="#exampleModalLong2">
+                                                    data-bs-target="#exampleModalLong03" style="width:70%">
                                                     Ajouter Dépense
                                                 </button>
+                                            </div>
+                                            <div class="col-3">     
+                                                <input type="file" name="depense_documents[]" id="upload" hidden multiple/>
+                                                <label class="label" for="upload"  style="width:70%"><i class="fas fa-file-upload"></i>  Importer fichers</label>               
                                             </div>
                                             <br>
                                             <br>
                                             <!--login form Modal -->
-                                            <div class="modal fade" id="exampleModalLong2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle1" aria-hidden="true">
+                                            <div class="modal fade" id="exampleModalLong03" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle1" aria-hidden="true">
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
@@ -518,16 +858,22 @@
                                                                                     if($produit['categorie'] == 'Depense') { ?>
                                                                                 <option value="<?php echo $produit['id'] ?>"> <?php echo $produit['nom'] ?></option>
                                                                             <?php } } ?>
+                                                                            
                                                                         </select>
                                                                     </fieldset>
-                                                                    <label>Type</label>
-                                                                    <fieldset class="form-group">
+                                                                    <label>Montant</label>
+                                                                    <div class="form-group">
+                                                                        <input type="text" name="depense_montant" class="form-control">
+                                                                    </div>
+                                                                   
+                                                                    <!-- <label>Type</label> -->
+                                                                    <!-- <fieldset class="form-group">
                                                                         <select class="form-select" id="select_paiement_depense" name="type_paiement_depense">
-                                                                            <?php foreach($moyens as $moyen){ ?>
-                                                                                <option value="<?php echo $moyen['id'] ?>"> <?php echo $moyen['nom'] ?></option>
-                                                                            <?php } ?>
+                                                                            <?php //foreach($moyens as $moyen){ ?>
+                                                                                <option value="<?php //echo $moyen['id'] ?>"> <?php //echo $moyen['nom'] ?></option>
+                                                                            <?php //} ?>
                                                                         </select>
-                                                                    </fieldset>
+                                                                    </fieldset> -->
                                                                     <label>Quantité</label>
                                                                     <div class="form-group">
                                                                         <input type="number" name="depense_qte" class="form-control" value="0" required>
@@ -575,20 +921,24 @@
                                             </div>
                                             <br>
                                             <br>
-                                            <div class="col-12">             
+                                            <div class="col-3">             
                                                 <button type="button" class="btn btn-outline-success" data-bs-toggle="modal"
-                                                    data-bs-target="#exampleModalLong3">
+                                                    data-bs-target="#exampleModalLong04" style="width:70%">
                                                     Ajouter Réglement
                                                 </button>
+                                            </div>
+                                            <div class="col-3">     
+                                                <input type="file" name="reglement_documents[]" id="upload" hidden multiple/>
+                                                <label class="label" for="upload"  style="width:70%"><i class="fas fa-file-upload"></i>  Importer fichers</label>               
                                             </div>
                                             <br>
                                             <br>
                                             <!--login form Modal -->
-                                            <div class="modal fade" id="exampleModalLong3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle1" aria-hidden="true">
+                                            <div class="modal fade" id="exampleModalLong04" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle1" aria-hidden="true">
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
-                                                            <h5 class="modal-title" id="exampleModalLongTitle1">Ancien Crédit</h5>
+                                                            <h5 class="modal-title" id="exampleModalLongTitle1">Reglement Crédit</h5>
                                                             <button type="button" class="close" data-bs-dismiss="modal"
                                                                 aria-label="Close">
                                                                 <i data-feather="x">x</i>
@@ -647,12 +997,33 @@
     </section>
 </div>
 <style>
-    #table1 input, #myTable input, #myTable0 input, #myTable3 input, #myTable4 input, #myTable5 input {
-         width:100px;
-         text-align:center;
-         border:none;}
+    #table1 input,#table10 input, #myTable input, #myTable0 input, #myTable3 input, #myTable4 input, #myTable5 input {
+        width:100px;
+        text-align:center;
+        border:none;
+    }
+    .label{
+        display: inline-block;
+        background-color: #DF8025;
+        color: white;
+        padding: 0.5rem;
+        border-radius: 0.3rem;
+        cursor: pointer;
+        margin-top: 0.5rem;
+        text-align : center;
+    }
 </style>
-<script>    
+
+
+
+<script>   
+
+
+
+
+
+
+
 $(document).ready(function() {
     let $prix_c = 0;
 
@@ -711,6 +1082,10 @@ function volucompteur(id) {
                 $ca_volucompteur += parseFloat($(this).val());
                 
             })
+            $( "input[id^='1ca']" ).each(function(){
+                $ca_volucompteur += parseFloat($(this).val());
+                
+            })
 
             $ca_volucompteur = $ca_volucompteur.toFixed(2)
 
@@ -722,6 +1097,11 @@ function volucompteur(id) {
 
             control_ca  = parseFloat($("#total_volucompteur_header").html()) - parseFloat($("#total_credit_header").html()) - parseFloat($("#total_paiement_header").html())
             $("#control_ca").html(control_ca)
+
+            
+
+
+
         }else{ 
             alert("Compteur Final doit etre superieur");
             $("#compteur_final"+id).val($("#compteur_initial"+id).val()).change();
@@ -731,10 +1111,13 @@ function volucompteur(id) {
         
     }
     function stock_sortie(id,product){
+
         var $compteur_sortie_total = 0
         var $physique = 0
         var $id_class_super = ""
         var $id_class_super = ""
+        var $id_class_super = ""
+        var $id_class_gasoil = ""
 
         var $id_class = 0
         var p = ''
@@ -751,6 +1134,9 @@ function volucompteur(id) {
             }
             if($class.endsWith("Melange") ){
                 $id_class_melange = $class.split("-")[1];
+            }else if($class.endsWith("Gasoil")){
+                $id_class_gasoil = $class.split("-")[1];
+
             }
         });
 
@@ -758,8 +1144,14 @@ function volucompteur(id) {
             $(".c_stock-"+id+'-'+product).each(function(){
                 $compteur_sortie_total += parseFloat($(this).val())
             })
+            $(".c_stockB-"+id+'-'+product).each(function(){
+                $compteur_sortie_total += parseFloat($(this).val())
+            })
 
             $(".c_stock-"+$id_class_super+'-'+"SUPERSANSPLOMB").each(function(){
+                $compteur_sortie_total += parseFloat($(this).val())
+            })
+            $(".c_stockB-"+$id_class_super+'-'+"SUPERSANSPLOMB").each(function(){
                 $compteur_sortie_total += parseFloat($(this).val())
             })
             id = $id_class_super
@@ -768,16 +1160,30 @@ function volucompteur(id) {
             $(".c_stock-"+id+'-'+product).each(function(){
                 $compteur_sortie_total += parseFloat($(this).val())
             })
+            $(".c_stockB-"+id+'-'+product).each(function(){
+                $compteur_sortie_total += parseFloat($(this).val())
+            })
 
             $(".c_stock-"+$id_class_melange+'-'+"Melange").each(function(){
                 $compteur_sortie_total += parseFloat($(this).val())
             })
+            $(".c_stockB-"+$id_class_melange+'-'+"Melange").each(function(){
+                $compteur_sortie_total += parseFloat($(this).val())
+            })
 
-        }else{
+        }else if(product == 'Gasoil'){
             $(".c_stock-"+id+'-'+product).each(function(){
                 $compteur_sortie_total += parseFloat($(this).val())
             })
+            $(".c_stockB-"+id+'-'+product).each(function(){
+                $compteur_sortie_total += parseFloat($(this).val())
+            })
+
+            $(".c_stock-"+$id_class_gasoil+'-'+"Melange").each(function(){
+                $compteur_sortie_total += parseFloat($(this).val())
+            })
         }
+        
 
 
         
@@ -787,7 +1193,7 @@ function volucompteur(id) {
         // $("#m_e"+id).val($physique - $("#comptable"+id).val()); 
     }
     function stock(id,column){ 
-        console.log(column)
+        // console.log(column)
 
 
         $stock_initial = parseFloat($("#stock_initial"+id).val());
@@ -1013,21 +1419,21 @@ function volucompteur(id) {
         var tbody = $('#myTable3').children('tbody');
         var table = tbody.length ? tbody : $('#myTable3');
         var $prix_s_v = 0
-        Object.values(<?php print_r(json_encode($produits)); ?>).map((p) => {
-        if(p['id'] == $("#select_produit_v_s option:selected").val()) {
-                $prix_s_v = p['prix'];
-                return $prix_s_v;
-            }
-        })
+        // Object.values(<?php print_r(json_encode($produits)); ?>).map((p) => {
+        // if(p['id'] == $("#select_produit_v_s option:selected").val()) {
+        //         $prix_s_v = p['prix'];
+        //         return $prix_s_v;
+        //     }
+        // })
         table.append(   `<tr id=`+row_id+`>
                             <td><input type="text" value="`+$("#select_produit_v_s option:selected").html()+`" disabled="disabled"></td>
                             <input type="hidden" name="select_produit_v_s1[]" value=`+$("#select_produit_v_s option:selected").val()+`>
-                            <input type="hidden" id=prix_s_v`+row_id+` value=`+$prix_s_v+`>
-                            <td><input type="text" value=`+$("#select_paiement_v_s option:selected").html()+` disabled="disabled"></td>
-                            <input type="hidden" name="type_paiement_v_s1[]" value=`+$("#select_paiement_v_s option:selected").val()+`>
+                            <td><input type="number" id=prix_s_v`+row_id+` onchange=v_s_calcul(`+row_id+`) value=`+$("input[name=v_s_montant]").val()+`></td>
+                            
 
                             <td><input type="number" name="qte_v_s1[]" id=v_s_qte_id`+row_id+` onchange=v_s_calcul(`+row_id+`) value=`+$("input[name=v_s_qte]").val()+`></td>
-                            <td><input class="montant_v_s" type="number" name="total_v_s[]" id=total_v_s`+row_id+` value=`+($prix_s_v * parseFloat($("input[name=v_s_qte]").val()))+` readonly></td>
+                            <td><input type="text" name="immatricule_v_s1[]" id=v_s_immatricule_id`+row_id+` value=`+$("input[name=v_s_immatricule]").val()+`></td>
+                            <td><input class="montant_v_s" type="number" name="total_v_s[]" id=total_v_s`+row_id+` value=`+(parseFloat($("input[name=v_s_montant]").val()) * parseFloat($("input[name=v_s_qte]").val()))+` readonly></td>
                             <td><i onclick="supp_ventes_services(`+row_id+`)" class="fas fa-trash"></i></td>
                         </tr>`
                     ); 
@@ -1042,6 +1448,8 @@ function volucompteur(id) {
     function v_s_calcul(id){
         $prix = parseFloat($("#prix_s_v"+id).val());
         $qte = parseFloat($("#v_s_qte_id"+id).val()); 
+        console.log($prix)
+        console.log($qte)
         $("#total_v_s"+id).val($prix*$qte);
 
         var $totat_montant_v_s = 0
@@ -1063,6 +1471,16 @@ function volucompteur(id) {
         $("#total_ventes_services_header").html($totat_montant_v_s)
 
     }
+    // $( "#select_produit_depense" ).change(function() {
+    //     console.log($("#select_produit_depense option:selected").val())
+    //     if($("#select_produit_depense option:selected").val() == 'autres'){
+    //         $("#depense_produit_new").removeClass('d-none');
+    //         console.log("LLL")
+    //     }
+    // });
+
+
+
     $('#ajouter_depense').click(function(){ 
         var row_id = $("#myTable4 tr").length;
         var tbody = $('#myTable4').children('tbody');
@@ -1080,8 +1498,7 @@ function volucompteur(id) {
                             <td><input type="text" value="`+$("#select_produit_depense option:selected").html()+`" disabled="disabled"></td>
                             <input type="hidden" name="select_produit_depense1[]" value=`+$("#select_produit_depense option:selected").val()+`>
                             <input type="hidden" id=prix_depense`+row_id+` value=`+$prix_depense+`>
-                            <td><input type="text" value=`+$("#select_paiement_depense option:selected").html()+` disabled="disabled"></td>
-                            <input type="hidden" name="type_paiement_depense1[]" value=`+$("#select_paiement_depense option:selected").val()+`>
+                            
 
                             <td><input type="number" name="qte_depense[]" id=depense_qte_id`+row_id+` onchange=depense_calcul(`+row_id+`) value=`+$("input[name=depense_qte]").val()+`></td>
                             <td><input type="text" name="detail[]" id=depense_detail_id`+row_id+` value=`+$("input[name=depense_detail]").val()+`></td>

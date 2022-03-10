@@ -11,11 +11,8 @@
         <div class="card">
             <div class="card-header">
                 <?php if(isset($latest_recette)) { ?>
-                    <h4 style="text-align: center" class="card-title">Nouvelle Recette <?php echo date('Y-m-d', strtotime($latest_recette->recette_date . ' +1 day')); ?></h4>
-                <?php }else{ ?>
-                    <h4 style="text-align: center" class="card-title">Nouvelle Recette</h4>
-
-                    <?php } ?>
+                    <h4 style="text-align: center" class="card-title">Recette <?php echo date('Y-m-d', strtotime($latest_recette->recette_date)); ?></h4>
+                <?php } ?>
             </div>
             <div class="card-body">
                 <form method="post" action=<?php echo site_url('modifier_Recette') ?>>
@@ -125,24 +122,55 @@
                                                     </thead>
                                                     <tbody>
                                                         <?php if($volucompteurs){
+                                                            $index = 0;
                                                             foreach($volucompteurs as $volucompteur){   
+                                                                $rand = rand(10,100);
                                                                              
                                                         ?>
-                                                        <tr>
+                                                        <tr id="<?php echo $index.'#'.preg_replace('/\s+/', '', $volucompteur->pr_nom) ?>" class="row_<?php echo preg_replace('/\s+/', '', $volucompteur->pr_nom) ?>">
                                                             <td class="text-bold-500"><?php echo $volucompteur->p_nom; ?></td>
                                                             <td><?php echo $volucompteur->pr_nom; ?></td>
-                                                            <td class="text-bold-500"><input type="number" id="prix<?php echo $volucompteur->pompe_ids; ?>" name="volu_prix[]" value="<?php echo $volucompteur->pr_prix; ?>" readonly/>
+                                                            <td class="text-bold-500"><input type="number" id="prix<?php echo $volucompteur->pompe_ids; ?>" name="volu_prix[]" value="<?php echo $volucompteur->prix_unitaire; ?>" readonly/>
                                                             <input type="hidden" name="pr_ids[]" value="<?php echo $volucompteur->pr_ids; ?>" readonly/>
+                                                            <input type="hidden" name="volcompteur_id[]" value="<?php echo $volucompteur->volu_id; ?>" readonly/>
                                                             <input type="hidden" name="pompe_ids[]" value="<?php echo $volucompteur->pompe_ids; ?>" readonly/>
-                                                            <td><input type="number" id="compteur_initial<?php echo $volucompteur->pompe_ids; ?>" name="compteur_initial[]" value="<?php echo round($volucompteur->compteur_initial,2); ?>" readonly/></td>
-                                                            <td><input type="text" id="compteur_final<?php echo $volucompteur->pompe_ids; ?>" onchange="volucompteur(<?php echo $volucompteur->pompe_ids; ?>)" name="compteur_final[]" value="<?php echo round($volucompteur->compteur_final,2); ?>" min="<?php echo $volucompteur->compteur_final; ?>" step="any" readonly></td>
-                                                            <td><input class="c_stock-<?php echo $volucompteur->reservoir_id ?>-<?php echo str_replace(' ', '',$volucompteur->pr_nom); ?>" type="number" id="sortie<?php echo $volucompteur->pompe_ids; ?>" name="sortie[]" value="<?php echo round($volucompteur->sortie,2); ?>" disabled/></td>
-                                                            <td><input type="number" id="ca<?php echo $volucompteur->pompe_ids; ?>" name="ca[]" value="<?php echo round($volucompteur->ca,2); ?>" disabled="disabled" /></td>
+                                                            <td><input type="number" id="compteur_initial<?php echo $volucompteur->pompe_ids; ?>" name="compteur_initial[]" value="<?php echo round($volucompteur->compteur_initial,2); ?>"/></td>
+                                                            <td><input type="text" id="compteur_final<?php echo $volucompteur->pompe_ids; ?>" onchange="volucompteur(<?php echo $volucompteur->pompe_ids; ?>)" name="compteur_final[]" value="<?php echo round($volucompteur->compteur_final,2); ?>" min="<?php echo $volucompteur->compteur_final; ?>" step="any" <?php if(date('Y-m-d', strtotime($latest_recette->recette_date))  == date('Y-m-d') or $check_last_recette){  }else{ ?>readonly<?php } ?>></td>
+                                                            <td><input class="c_stock-<?php echo $volucompteur->reservoir_id ?>-<?php echo str_replace(' ', '',$volucompteur->pr_nom); ?>" type="number" id="sortie<?php echo $volucompteur->pompe_ids; ?>" name="sortie[]" value="<?php echo round(($volucompteur->compteur_final - $volucompteur->compteur_initial),2); ?>" disabled/></td>
+                                                            <td><input type="number" id="ca<?php echo $volucompteur->pompe_ids; ?>" name="ca[]" value="<?php echo round((($volucompteur->compteur_final - $volucompteur->compteur_initial) * $volucompteur->prix_unitaire) ,2); ?>" disabled="disabled" /></td>
                                                         </tr>
+                                                            
                                                         <?php 
+                                                                for($v = 1; $v <= 6; $v++){
+                                                                    
+                                                                    $compteur_final = "compteur_final".$v;
+                                                                    $prix_unitaire = "prix_unitaire".$v;
+                                                                    if($volucompteur->$compteur_final > 0){     
+                                                                ?>
+                                                                <tr class ="<?php echo "sub_" . $index . "_" . $v ; ?>">
+                                                                    <td></td>
+                                                                    <td></td>
+                                                                    <td><input name="<?php echo "sub_volu_prix_".$rand."[]";?>" id="1prix<?php echo $rand ?>" type="text" value="<?php echo $volucompteur->$prix_unitaire ?>" class="<?php echo "prix_".preg_replace('/\s+/', '', $volucompteur->pr_nom)."_".$v; ?>" onchange="inter_vol(<?php echo $rand ?>);trial(this)" readonly></td>
+                                                                    <td><input name="sub_compteur_initial[]" id="1compteur_initial<?php echo $rand ?>" type="text" value="<?php if($v == 1){ echo $volucompteur->compteur_final;} else { $compteur = "compteur_final".$v-1; echo $volucompteur->$compteur ;} ?>" onchange="inter_vol(<?php echo $rand ?>)"></td>
+                                                                    <td><input name="<?php echo "sub_compteur_final_".$rand."[]" ; ?>" id="1compteur_final<?php echo $rand ?>" type="text" value="<?php echo $volucompteur->$compteur_final ?>" onchange="inter_vol(<?php echo $rand ?>)"></td> 
+                                                                    <td><input class="<?php echo "c_stockB-".$volucompteur->reservoir_id."-".preg_replace('/\s+/', '', $volucompteur->pr_nom)?>" id="1sortie<?php echo $rand ?>" type="text" onchange="<?php echo "stock_sortie(".$volucompteur->reservoir_id.",'".preg_replace('/\s+/', '', $volucompteur->pr_nom)."')";?>" value="<?php if($v == 1){ echo (float)$volucompteur->$compteur_final - (float)$volucompteur->compteur_final;} else { $compteur = "compteur_final".$v-1; echo $volucompteur->$compteur_final - $volucompteur->$compteur ;}?>" readonly></td>
+                                                                    <td><input id="1ca<?php echo $rand ?>" type="text" value="<?php if($v == 1){ echo ($volucompteur->$compteur_final - $volucompteur->compteur_final) *  $volucompteur->$prix_unitaire;} else { $compteur = "compteur_final".$v-1; echo ($volucompteur->$compteur_final - $volucompteur->$compteur) *  $volucompteur->$prix_unitaire ;}?>" readonly></td>
+                                                                    <td><input name="sub_pompe_id[]" type="hidden" value="<?php echo $volucompteur->pompe_ids; ?>" readonly></td>
+                                                                    
+                                                                    
+                                                                    <td></td>
+                                                                </tr>
+
+
+                                                                <?php
+                                                                    $rand ++;
+                                                                    }
+                                                                }
+                                                                $index ++;
                                                             } 
                                                         }
                                                         ?>
+                                                        
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -175,13 +203,16 @@
                                                         <tr>
                                                             <td class="text-bold-500"><?php echo $reservoir->r_nom; ?></td>
                                                             <input type="hidden" name="reservoir_id[]" value="<?php echo $reservoir->id; ?>">
+                                                            <input type="hidden" name="stock_id[]" value="<?php echo $reservoir->stock_id; ?>">
                                                             <td><?php echo $reservoir->pr_nom; ?></td>
-                                                            <td class="text-bold-500"><input type="number" value="<?php echo round(round($reservoir->s_stock_comptable,2) + round($reservoir->stock_sortie,2),2); ?>" name="stock_initial[]" readonly/>
-                                                            <td><input type="number" value = "<?php echo $reservoir->s_entree; ?>" id="entree<?php echo $reservoir->id; ?>"readonly></td>
-                                                            <td><input type="number" value = "<?php echo $reservoir->stock_sortie; ?>" name="sortie_stock[]" readonly></td>
-                                                            <td class="text-bold-500"><input type="number" value="<?php echo round($reservoir->s_stock_comptable,2); ?>" name="comptable[]" disabled="disabled" />
-                                                            <td><input type="text" value="<?php echo round($reservoir->s_stock_physique,2); ?>" name="physique[]" readonly></td>
-                                                            <td><input type="number" value="<?php echo round($reservoir->s_manquant_excedent,2); ?>" name="m_e[]" readonly/></td>
+                                                            <input type="hidden" value="<?php echo $reservoir->produits_ids; ?>" name="produits_ids[]" readonly/>
+                                                            <input type="hidden" value="<?php echo $reservoir->prix_achat; ?>" name="prix_achat[]" readonly/>
+                                                            <td class="text-bold-500"><input type="number" value="<?php echo round(round($reservoir->s_stock_comptable,2) + round($reservoir->stock_sortie,2),2); ?>" id="stock_initial<?php echo $reservoir->id; ?>" name="stock_initial[]" readonly/>
+                                                            <td><input type="number" name="entree[]" id="entree<?php echo $reservoir->id; ?>" value = "<?php echo $reservoir->s_entree; ?>" id="entree<?php echo $reservoir->id; ?>" onchange="stock(<?php echo $reservoir->id; ?>,'Entree')" <?php if(date('Y-m-d', strtotime($latest_recette->recette_date))  == date('Y-m-d') or $check_last_recette){  }else{ ?>readonly<?php } ?>></td>
+                                                            <td><input type="number" id="sortie_r<?php echo $reservoir->id; ?>" value = "<?php echo $reservoir->stock_sortie; ?>"  onchange="stock(<?php echo $reservoir->id; ?>,'Sortie')" name="sortie_stock[]" readonly></td>
+                                                            <td class="text-bold-500"><input type="number" id="comptable<?php echo $reservoir->id; ?>" value="<?php echo round($reservoir->s_stock_comptable,2); ?>" name="comptable[]" disabled="disabled" />
+                                                            <td><input type="text" onchange="stock(<?php echo $reservoir->id; ?>,'Physique')" id="physique<?php echo $reservoir->id; ?>" value="<?php echo round($reservoir->s_stock_physique,2); ?>" name="physique[]" <?php if(date('Y-m-d', strtotime($latest_recette->recette_date))  == date('Y-m-d') or $check_last_recette){  }else{ ?>readonly<?php } ?>></td>
+                                                            <td><input type="number" id="m_e<?php echo $reservoir->id; ?>" value="<?php echo round($reservoir->s_manquant_excedent,2); ?>" name="m_e[]" readonly/></td>
                                                         </tr>
                                                         <?php 
                                                             } 
@@ -326,7 +357,14 @@
                                                                 <tr id="<?php echo $compteur_paiement; ?>">
                                                                     <td><input type="text" value="<?php echo $paiement->paiement_nom ?>" disabled="disabled"></td>
 
-                                                                    <input type="hidden" name="paiement_id1[]" value=<?php echo $paiement->id ?>>
+
+                                                                    <input type="hidden" name="p_type_paiement1[]" value=<?php echo $paiement->id ?>>
+                                                                    <input type="hidden" name="type_paiement1[]" value=<?php echo $paiement->type_paiement ?>>
+
+
+
+
+
                                                                     <td><input type="text" name="p_montant[]" id=montant<?php echo $compteur_paiement; ?> onchange=paiement(<?php echo $compteur_paiement; ?>) value=<?php echo $paiement->paiement_montant ?>></td>
                                                                     <td><input type="text" name="p_commission[]" id=commission<?php echo $compteur_paiement; ?> onchange=paiement(<?php echo $compteur_paiement; ?>) value=<?php echo $paiement->paiement_commission ?>></td>
                                                                     <td><input class="totat_montant_paiement" type="text" id=montant_net<?php echo $compteur_paiement; ?> value=<?php echo $paiement->paiement_montant_restant ; ?> disabled="disabled"></td>
@@ -424,8 +462,9 @@
                                                     <thead>
                                                         <tr>
                                                             <th>Produit</th>
-                                                            <th>Type de paiement</th>
+                                                            <th>Montant</th>
                                                             <th>Quantité</th>
+                                                            <th>Immatricule</th>
                                                             <th>Total</th>
                                                             <th>ACTION</th>
                                                         </tr>
@@ -442,11 +481,12 @@
 
                                                                 <td><input type="text" value="<?php echo ($s->produit_nom); ?>" disabled="disabled"></td>
                                                                 <input type="hidden" name="select_produit_v_s1[]" value=<?php echo ($s->produit_id); ?>>
-                                                                <input type="hidden" id=prix_s_v<?php echo ($compteur_services); ?> value=<?php echo ($s->produit_prix); ?>>
-                                                                <td><input type="text" value=<?php echo ($s->moyen_nom); ?> disabled="disabled"></td>
-                                                                <input type="hidden" name="type_paiement_v_s1[]" value=<?php echo ($s->moyen_id); ?> >
+                                                                <td><input type="number" id=prix_s_v<?php echo ($compteur_services); ?> onchange="v_s_calcul(<?php echo ($compteur_services); ?>)" value=<?php echo ($s->produit_prix); ?>></td>
+                                                                <!-- <td><input type="text" value=<?php //echo ($s->moyen_nom); ?> disabled="disabled"></td>
+                                                                <input type="hidden" name="type_paiement_v_s1[]" value=<?php //echo ($s->moyen_id); ?> > -->
 
-                                                                <td><input type="number" name="qte_v_s1[]" id=v_s_qte_id<?php echo ($compteur_services); ?> onchange=v_s_calcul(<?php echo ($compteur_services); ?>) value=<?php echo $s->services_qt; ?>></td>
+                                                                <td><input type="number" name="qte_v_s1[]" id=v_s_qte_id<?php echo ($compteur_services); ?> onchange="v_s_calcul(<?php echo ($compteur_services); ?>)" value=<?php echo $s->services_qt; ?>></td>
+                                                                <td><input type="text" name="immatricule_v_s1[]" value=<?php echo $s->immatricule; ?>></td>
                                                                 <td><input class="montant_v_s" type="number" name="total_v_s[]" id=total_v_s<?php echo ($compteur_services); ?> value=<?php echo $s->services_montant; ?> readonly></td>
                                                                 <!-- <td><i onclick="supp_ventes_services(<?php //echo ($compteur_services); ?>)" class="fas fa-trash"></i></td> -->
                                                                 </tr>
@@ -492,14 +532,22 @@
                                                                             <?php } } ?>
                                                                         </select>
                                                                     </fieldset>
-                                                                    <label>Type</label>
-                                                                    <fieldset class="form-group">
+                                                                    <!-- <label>Type</label> -->
+                                                                    <!-- <fieldset class="form-group">
                                                                         <select class="form-select" id="select_paiement_v_s" name="type_paiement_v_s">
-                                                                            <?php foreach($moyens as $moyen){ ?>
-                                                                                <option value="<?php echo $moyen['id'] ?>"> <?php echo $moyen['nom'] ?></option>
-                                                                            <?php } ?>
+                                                                            <?php //foreach($moyens as $moyen){ ?>
+                                                                                <option value="<?php //echo $moyen['id'] ?>"> <?php //echo $moyen['nom'] ?></option>
+                                                                            <?php //} ?>
                                                                         </select>
-                                                                    </fieldset>
+                                                                    </fieldset> -->
+                                                                    <label>Montant</label>
+                                                                    <div class="form-group">
+                                                                        <input type="text" name="v_s_montant" class="form-control" value="0" required>
+                                                                    </div>
+                                                                    <label>Immatricule</label>
+                                                                    <div class="form-group">
+                                                                        <input type="text" name="v_s_immatricule" class="form-control" value="0" required>
+                                                                    </div>
                                                                     <label>Quantité</label>
                                                                     <div class="form-group">
                                                                         <input type="number" name="v_s_qte" class="form-control" value="0" required>
@@ -531,7 +579,7 @@
                                                     <thead>
                                                         <tr>
                                                             <th>Produit</th>
-                                                            <th>Type de paiement</th>
+                                                            <!-- <th>Type de paiement</th> -->
                                                             <th>Quantité</th>
                                                             <th>Detail</th>
                                                             <th>Total</th>
@@ -549,8 +597,8 @@
                                                                     <td><input type="text" value="<?php echo $d->produit_nom ; ?>" disabled="disabled"></td>
                                                                     <input type="hidden" name="select_produit_depense1[]" value=<?php echo $d->produit_id ; ?>>
                                                                     <input type="hidden" id=prix_depense<?php echo $compteur_depense; ?> value=<?php echo $d->produit_prix ; ?>>
-                                                                    <td><input type="text" value="<?php echo $d->moyen_nom ; ?>" disabled="disabled"></td>
-                                                                    <input type="hidden" name="type_paiement_depense1[]" value=<?php echo $d->moyen_id ; ?>>
+                                                                    <!-- <td><input type="text" value="<?php //echo $d->moyen_nom ; ?>" disabled="disabled"></td>
+                                                                    <input type="hidden" name="type_paiement_depense1[]" value=<?php //echo $d->moyen_id ; ?>> -->
 
                                                                     <td><input type="number" name="qte_depense[]" id=depense_qte_id<?php echo $compteur_depense; ?> onchange=depense_calcul(<?php echo $compteur_depense; ?>) value=<?php echo $d->depense_qt ; ?>></td>
                                                                     <td><input type="text" name="detail[]" id=depense_detail_id<?php echo $compteur_depense; ?> value=<?php echo $d->depense_detail ; ?>></td>
@@ -599,14 +647,6 @@
                                                                             <?php } } ?>
                                                                         </select>
                                                                     </fieldset>
-                                                                    <label>Type</label>
-                                                                    <fieldset class="form-group">
-                                                                        <select class="form-select" id="select_paiement_depense" name="type_paiement_depense">
-                                                                            <?php foreach($moyens as $moyen){ ?>
-                                                                                <option value="<?php echo $moyen['id'] ?>"> <?php echo $moyen['nom'] ?></option>
-                                                                            <?php } ?>
-                                                                        </select>
-                                                                    </fieldset>
                                                                     <label>Quantité</label>
                                                                     <div class="form-group">
                                                                         <input type="number" name="depense_qte" class="form-control" value="0" required>
@@ -648,7 +688,24 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                    
+                                                    <?php if(isset($reglements)){  
+                                                            $compteur_reglement = 0
+                                                            ?>
+                                                            <?php foreach ($reglements as $r){ ?>                                                                
+                                                                <tr id="<?php echo $compteur_reglement; ?>">
+                                                                    <input type="hidden" name="reglement_id[]" value=<?php echo $r->id ; ?>>
+                                                                    <td><input type="text" value="<?php echo $r->client_nom ; ?>" disabled="disabled"></td>
+                                                                    <input type="hidden" name="select_client_reglement1[]" value=<?php echo $r->client_id ; ?>>
+
+                                                                    <td><input class="reglement" type="number" name="reglement_montant1[]" id=reglement_montant_id<?php echo $compteur_reglement; ?> onchange=reglement_calcul(<?php echo $compteur_reglement; ?>) value=<?php echo $r->montant ; ?>></td>
+                                                                    <td><input type="text" name="objet_reglement1[]" id=objet_regelement_id<?php echo $compteur_reglement; ?> value=<?php echo $r->id ; ?>></td>
+                                                                </tr>
+                                                                    
+                                                            <?php 
+                                                            $compteur_reglement ++;   
+                                                                }  
+                                                            }
+                                                        ?> 
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -731,6 +788,87 @@
          text-align:center;
          border:none;}
 </style>
+<script>
+                                                             function inter_vol(id) {
+                                                    var $ca_volucompteur1 = 0
+                                                    var result1 = 0
+                                                    var ca1 = 0
+                                                    // var class_array = [];
+
+                                                    // $( "tr[class^='row_']" ).each(function(){
+                                                    //     if(jQuery.inArray(this.className, class_array) == -1){
+                                                    //         class_array.push(this.className)
+                                                                                                                    
+                                                    //     }
+                                                    // });
+                                                    // console.log(class_array)
+                                                    // console.log(id)
+                                                    // var obj = class_click.find(o => o.class === id);
+
+                                                    // alert(obj)
+
+                                                    // $('.prix_'+id)each(function(){
+
+                                                    // })
+
+                                                    if(parseFloat($("#1compteur_final"+id).val()) >= parseFloat($("#1compteur_initial"+id).val())){
+                                                        $compteur_initial1 = parseFloat($("#1compteur_initial"+id).val());
+                                                        $compteur_final1 = parseFloat($("#1compteur_final"+id).val());
+
+                                                        console.log($compteur_initial1);
+                                                        console.log($compteur_final1);
+                                                        console.log($compteur_final1 - $compteur_initial1)
+
+                                                        $result1 = ($compteur_final1 - $compteur_initial1).toFixed(2)
+ 
+                                                        $("#1sortie"+id).val($result1).change()
+
+                                                        ca1 = $result1 * $("#1prix"+id).val()
+                                                        $("#1ca"+id).val( ca1.toFixed(2));
+
+                                                        $( "input[id^='1ca']" ).each(function(){
+                                                            if(!isNaN(parseFloat($(this).val()))) {
+                                                                $ca_volucompteur1 += parseFloat($(this).val());
+                                                            }
+                                                            
+                                                        })
+                                                        $( "input[id^='ca']" ).each(function(){
+                                                            $ca_volucompteur1 += parseFloat($(this).val());
+                                                            
+                                                        })
+
+                                                        $ca_volucompteur1 = $ca_volucompteur1.toFixed(2)
+
+                                                        $("#somme_ca").val($ca_volucompteur1)
+
+                                                        $("#total_volucompteur_header").html($ca_volucompteur1)
+
+                                                        var control_ca1 = 0
+
+                                                        control_ca1  = parseFloat($("#total_volucompteur_header").html()) - parseFloat($("#total_credit_header").html()) - parseFloat($("#total_paiement_header").html())
+                                                        $("#control_ca").html(control_ca1)
+                                                        // var vv = document.getElementById("compteur_initial"+parseFloat(id))
+                                                        // console.log(vv.closest('tr').eq(2))
+                                                        // console.log("#1compteur_initial"+parseFloat(id))
+                                                        var $vv = $("#1compteur_initial"+parseFloat(id)).closest('tr').next('tr').find('td').eq(3).find('input').attr('id')
+                                                        // console.log($vv)
+                                                        // var nextId = $('#'+first_tr_id ).next("tr").attr("id");
+
+                                                        // console.log($("#1compteur_initial"+parseFloat(id)).closest('tr').find('td').eq(3).find('input').val())
+                                                        // console.log($("#1compteur_initial"+parseFloat(id)).closest('tr'))
+                                                        if(typeof $vv != 'undefined'){
+                                                            if($vv.startsWith("1compteur")) {
+                                                                $("#"+$vv).val($("#1compteur_final"+id).val()).change()
+                                                            }
+                                                        }
+
+                                                    }else if(parseFloat($("#1compteur_final"+id).val()) < parseFloat($("#1compteur_initial"+id).val())){
+
+                                                        alert("Compteur Final doit etre superieur");
+                                                        $("#1compteur_final"+id).val($("#1compteur_initial"+id).val()).change();
+                                                    }  
+                                                }
+                                                        </script>
 <script>    
 $(document).ready(function() {
     let $prix_c = 0;
@@ -745,6 +883,10 @@ $(document).ready(function() {
     $("#total_credit_header").html($montant_credit_total);
 
     $( "input[id^='ca']" ).each(function(){
+        console.log($(this).attr('id'))
+        $ca_volucompteur += parseFloat($(this).val());
+    })
+    $( "input[id^='1ca']" ).each(function(){
         $ca_volucompteur += parseFloat($(this).val());
     })
     $ca_volucompteur = $ca_volucompteur.toFixed(2)
@@ -773,16 +915,16 @@ $(document).ready(function() {
         $totat_montant_paiement += parseFloat($(this).val()) 
     })
 
-    $("#somme_paiement").val("Somme :" + $totat_montant_paiement);
-    $("#total_paiement_header").html($totat_montant_paiement)
+    $("#somme_paiement").val("Somme :" + $totat_montant_paiement.toFixed(2));
+    $("#total_paiement_header").html($totat_montant_paiement.toFixed(2))
 
     var $totat_reglement = 0
     $(".reglement").each(function() {
         $totat_reglement += parseFloat($(this).val()) 
     })
 
-    $("#somme_reglement").val("Somme :" + $totat_reglement);
-    $("#total_reglement_header").html($totat_reglement)
+    $("#somme_reglement").val("Somme :" + $totat_reglement.toFixed(2));
+    $("#total_reglement_header").html($totat_reglement.toFixed(2))
 
 
     
@@ -842,10 +984,12 @@ function volucompteur(id) {
         
     }
     function stock_sortie(id,product){
+        console.log("lll")
         var $compteur_sortie_total = 0
         var $physique = 0
         var $id_class_super = ""
-        var $id_class_super = ""
+
+        var $id_class_gasoil = ""
 
         var $id_class = 0
         var p = ''
@@ -869,8 +1013,14 @@ function volucompteur(id) {
             $(".c_stock-"+id+'-'+product).each(function(){
                 $compteur_sortie_total += parseFloat($(this).val())
             })
+            $(".c_stockB-"+id+'-'+product).each(function(){
+                $compteur_sortie_total += parseFloat($(this).val())
+            })
 
             $(".c_stock-"+$id_class_super+'-'+"SUPERSANSPLOMB").each(function(){
+                $compteur_sortie_total += parseFloat($(this).val())
+            })
+            $(".c_stockB-"+$id_class_super+'-'+"SUPERSANSPLOMB").each(function(){
                 $compteur_sortie_total += parseFloat($(this).val())
             })
             id = $id_class_super
@@ -879,13 +1029,26 @@ function volucompteur(id) {
             $(".c_stock-"+id+'-'+product).each(function(){
                 $compteur_sortie_total += parseFloat($(this).val())
             })
+            $(".c_stockB-"+id+'-'+product).each(function(){
+                $compteur_sortie_total += parseFloat($(this).val())
+            })
 
             $(".c_stock-"+$id_class_melange+'-'+"Melange").each(function(){
                 $compteur_sortie_total += parseFloat($(this).val())
             })
+            $(".c_stockB-"+$id_class_melange+'-'+"Melange").each(function(){
+                $compteur_sortie_total += parseFloat($(this).val())
+            })
 
-        }else{
+        }else if(product == 'Gasoil'){
             $(".c_stock-"+id+'-'+product).each(function(){
+                $compteur_sortie_total += parseFloat($(this).val())
+            })
+            $(".c_stockB-"+id+'-'+product).each(function(){
+                $compteur_sortie_total += parseFloat($(this).val())
+            })
+
+            $(".c_stock-"+$id_class_gasoil+'-'+"Melange").each(function(){
                 $compteur_sortie_total += parseFloat($(this).val())
             })
         }
@@ -898,13 +1061,20 @@ function volucompteur(id) {
         // $("#m_e"+id).val($physique - $("#comptable"+id).val()); 
     }
     function stock(id,column){ 
-        console.log(column)
+        // console.log(column)
 
 
         $stock_initial = parseFloat($("#stock_initial"+id).val());
         $entree = parseFloat($("#entree"+id).val());
         $sortie = parseFloat($("#sortie_r"+id).val()).toFixed(2);
         $physique = parseFloat($("#physique"+id).val());
+
+        // console.log($physique)
+        // console.log($("#comptable"+id).val())
+        // console.log($stock_initial)
+        // console.log($entree)
+        // console.log($sortie)
+        // console.log(($physique - $("#comptable"+id).val()).toFixed(2))
 
 
         if(column == 'Physique'){
@@ -922,7 +1092,7 @@ function volucompteur(id) {
         // $("#m_e"+id).val($physique - $("#comptable"+id).val());
     }
     function change_sortie_stock(id){
-        console.log(id)
+        // console.log(id)
         $sortie = parseFloat($("#sortie_r"+id).val($("#sortie"+id).val()));
     }
 
@@ -948,7 +1118,7 @@ function volucompteur(id) {
         
         table.append(   `<tr id=`+row_id+`>
                             <td><input type="text" value="`+$("#select_paiement option:selected").html()+`" disabled="disabled"></td>
-                            <input type="hidden" name="p_type_paiement[]" value=`+$("#select_paiement option:selected").val()+`>
+                            <input type="hidden" name="type_paiement1[]" value=`+$("#select_paiement option:selected").val()+`>
                             <td><input type="text" name="p_montant[]" id=montant`+row_id+` onchange=paiement(`+row_id+`) value=`+$("input[name=montant]").val()+`></td>
                             <td><input type="text" name="p_commission[]" id=commission`+row_id+` onchange=paiement(`+row_id+`) value=`+$("input[name=commission]").val()+`></td>
                             <td><input class="totat_montant_paiement" type="text" id=montant_net`+row_id+` value=`+$montant_net+` disabled="disabled"></td>
@@ -1008,7 +1178,7 @@ function volucompteur(id) {
                             <td><input class=montant_credit`+$("#c_select_clients option:selected").val()+` name="c_montant1[]" type="number" id=c_montant`+row_id+` onchange=credit_calcul(`+row_id+`) value=`+$montant+`></td>
                             <td><i onclick="supp_credit(`+row_id+`)" class="fas fa-trash"></i></td>
                         </tr>`
-                    )
+                    );
       
         $( "input[class^='montant_credit']" ).each(function(){
             $montant_credit_total += parseFloat($(this).val())  
@@ -1044,8 +1214,8 @@ function volucompteur(id) {
 
     function paiement(id){
         
-        console.log($("#montant"+id).val());
-        console.log($("#commission"+id).val());
+        // console.log($("#montant"+id).val());
+        // console.log($("#commission"+id).val());
         var new_montant = $("#montant"+id).val() - $("#commission"+id).val()
         if(new_montant > 0){
             $("#montant_net"+id).val(new_montant);
@@ -1086,22 +1256,22 @@ function volucompteur(id) {
         var row_id = $("#myTable3 tr").length;
         var tbody = $('#myTable3').children('tbody');
         var table = tbody.length ? tbody : $('#myTable3');
-        var $prix_s_v = 0
-        Object.values(<?php print_r(json_encode($produits)); ?>).map((p) => {
-        if(p['id'] == $("#select_produit_v_s option:selected").val()) {
-                $prix_s_v = p['prix'];
-                return $prix_s_v;
-            }
-        })
+        // var $prix_s_v = 0
+        // Object.values(<?php //print_r(json_encode($produits)); ?>).map((p) => {
+        // if(p['id'] == $("#select_produit_v_s option:selected").val()) {
+        //         $prix_s_v = p['prix'];
+        //         return $prix_s_v;
+        //     }
+        // })
         table.append(   `<tr id=`+row_id+`>
                             <td><input type="text" value="`+$("#select_produit_v_s option:selected").html()+`" disabled="disabled"></td>
                             <input type="hidden" name="select_produit_v_s1[]" value=`+$("#select_produit_v_s option:selected").val()+`>
-                            <input type="hidden" id=prix_s_v`+row_id+` value=`+$prix_s_v+`>
-                            <td><input type="text" value=`+$("#select_paiement_v_s option:selected").html()+` disabled="disabled"></td>
-                            <input type="hidden" name="type_paiement_v_s1[]" value=`+$("#select_paiement_v_s option:selected").val()+`>
+                            <td><input type="text" id=prix_s_v`+row_id+` value=`+$("input[name=v_s_montant]").val()+` onchange=v_s_calcul(`+row_id+`)></td>
+                            
 
                             <td><input type="number" name="qte_v_s1[]" id=v_s_qte_id`+row_id+` onchange=v_s_calcul(`+row_id+`) value=`+$("input[name=v_s_qte]").val()+`></td>
-                            <td><input class="montant_v_s" type="number" name="total_v_s[]" id=total_v_s`+row_id+` value=`+($prix_s_v * parseFloat($("input[name=v_s_qte]").val()))+` readonly></td>
+                            <td><input type="text" name="immatricule_v_s1[]" value=`+$("input[name=v_s_immatricule]").val()+`></td>
+                            <td><input class="montant_v_s" type="number" name="total_v_s[]" id=total_v_s`+row_id+` value=`+(parseFloat($("input[name=v_s_montant]").val()) * parseFloat($("input[name=v_s_qte]").val()))+` readonly></td>
                             <td><i onclick="supp_ventes_services(`+row_id+`)" class="fas fa-trash"></i></td>
                         </tr>`
                     ); 
@@ -1154,9 +1324,7 @@ function volucompteur(id) {
                             <td><input type="text" value="`+$("#select_produit_depense option:selected").html()+`" disabled="disabled"></td>
                             <input type="hidden" name="select_produit_depense1[]" value=`+$("#select_produit_depense option:selected").val()+`>
                             <input type="hidden" id=prix_depense`+row_id+` value=`+$prix_depense+`>
-                            <td><input type="text" value=`+$("#select_paiement_depense option:selected").html()+` disabled="disabled"></td>
-                            <input type="hidden" name="type_paiement_depense1[]" value=`+$("#select_paiement_depense option:selected").val()+`>
-
+                            
                             <td><input type="number" name="qte_depense[]" id=depense_qte_id`+row_id+` onchange=depense_calcul(`+row_id+`) value=`+$("input[name=depense_qte]").val()+`></td>
                             <td><input type="text" name="detail[]" id=depense_detail_id`+row_id+` value=`+$("input[name=depense_detail]").val()+`></td>
                             <td><input class="montant_depense" type="number" name="total_depense[]" id=total_depense`+row_id+` value=`+($prix_depense * parseFloat($("input[name=depense_qte]").val()))+` readonly></td>
@@ -1226,6 +1394,16 @@ function volucompteur(id) {
 
     });
     
+    function reglement_calcul(id){
+        var $totat_reglement = 0
+        $(".reglement").each(function() {
+            $totat_reglement += parseFloat($(this).val()) 
+        })
+
+        $("#somme_reglement").val("Somme :" + $totat_reglement);
+        $("#total_reglement_header").html($totat_reglement)
+    }
+
     function supp_reglement(id){ 
         $("#myTable5 tr#"+id).remove();
         var $totat_reglement = 0

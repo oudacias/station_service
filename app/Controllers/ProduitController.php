@@ -15,9 +15,13 @@ class ProduitController extends BaseController
                                 liste.prix as liste_prix, liste.type as liste_type, 
                                 liste.date_prix_debut as date_prix_debut, liste.date_prix_fin as date_prix_fin 
                                 FROM produits p 
-                                LEFT JOIN listeprixproduits liste ON p.id = liste.produit_id 
-                                WHERE liste.created_at in (select max(created_at) FROM listeprixproduits GROUP BY produit_id,type)  
-                                OR liste.date_prix_fin IS NULL 
+                                LEFT JOIN listeprixproduits liste ON p.id = liste.produit_id and liste.id IN (SELECT id FROM `listeprixproduits` where produit_id = p.id and date_prix_debut <= CURRENT_DATE GROUP by produit_id , type HAVING max(created_at))
+
+                                -- WHERE (liste.created_at in (select max(created_at)
+                                --                                 FROM listeprixproduits 
+                                --                                 GROUP BY produit_id,type 
+                                --                                 HAVING date_prix_debut <= CURRENT_DATE) 
+                                -- OR liste.date_prix_fin IS NULL) 
                                 ORDER BY p.categorie;
                             ");
         $produits = $query->getResult();

@@ -16,7 +16,7 @@ class userInfo extends Model
     protected $role = 'role';*/
 
     protected $allowedFields = [
-        'id','nom', 'prenom','station_id', 
+        'id','user_id','nom', 'prenom','station_id', 
     ];
 
     public function getUserStation(int $id)

@@ -7,7 +7,7 @@ use CodeIgniter\Session\Session;
 use Myth\Auth\Config\Auth as AuthConfig;
 use Myth\Auth\Entities\User;
 use Myth\Auth\Models\UserModel;
-use App\Models\userInfo;
+use App\Models\UserInfo;
 use App\Models\Station;
 use Myth\Auth\Authorization\GroupModel;
 
@@ -129,15 +129,17 @@ class ExtrainfoController extends Controller
 		$user_id = $users->getInsertID();
 		//creates new user in the table user_info 
 
-		$client = new userInfo();
+		echo $users->getInsertID();
+
+		$client = new UserInfo();
 		$data = array(
-			'id' => $user_id,
+			'user_id' => $users->getInsertID(),
 			'prenom' => $this->request->getPost('firstname'),
 			'nom' => $this->request->getPost('lastname'),
 			'station_id' => $this->request->getPost('station'),
 		);
 		$client->insert($data);
-		return redirect()->route('newuser')->with('message', lang('Auth.registerSuccess'));
+		return redirect()->to('Configuration/Utilisateurs')->with('message', lang('Auth.registerSuccess'));
 	}
 
 
@@ -166,7 +168,7 @@ class ExtrainfoController extends Controller
 		$users->save($user);
 		//echo var_dump($user);
 
-		return redirect()->route('newuser')->with('message', lang('Auth.userRoleUpdated'));
+		return redirect()->to('Configuration/Utilisateurs')->with('message', lang('Auth.userRoleUpdated'));
 	}
 
 	public function deactivateUser()
@@ -198,11 +200,17 @@ class ExtrainfoController extends Controller
 		$groupName = $groupName[0];
 		$group->removeUserFromAllGroups($id);
 		$group = $group->addUserToGroup($id, $role);
-		return redirect()->route('newuser')->with('message', lang('Auth.userRoleUpdated', [$groupName["name"]]));
+		return redirect()->to('Configuration/Utilisateurs')->with('message', lang('Auth.userRoleUpdated', [$groupName["name"]]));
 	}
 
 	protected function _render(string $view, array $data = [])
 	{
 		return view($view, $data);
+	}
+	public function controleur_station()
+	{
+		$station = new Station();
+		$stations = $station->find();
+		return view('login2', ['stations'=>$stations]);
 	}
 }

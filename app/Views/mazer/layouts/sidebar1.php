@@ -42,6 +42,20 @@ $uri3 = $uri[3] ?? '';
                         </li>
                     </ul>
                 </li>
+                <li class="sidebar-item <?= ($uri1 == 'Stock') ? 'active' : '' ?> has-sub">
+                    <a href="#" class='sidebar-link'>
+                    <i class="fas fa-boxes"></i>              
+                        <span>Stock</span>
+                    </a>
+                    <ul class="submenu <?= ($uri1 == 'Stock') ? 'active' : '' ?>">
+                        <li class="submenu-item <?= ($uri4 == 'Stock') ? 'active' : '' ?>">
+                            <a href="/Stock/Stock">Stock</a>
+                        </li>
+                        <li class="submenu-item <?= ($uri4 == 'Historique') ? 'active' : '' ?>">
+                            <a href="/Stock/historique">Historique</a>
+                        </li>
+                    </ul>
+                </li>
                 <li class="sidebar-item <?= ($uri1 == 'Configuration') ? 'active' : '' ?> has-sub">
                     <a href="#" class='sidebar-link'>
                         <i class="fas fa-tools"></i>

@@ -16,20 +16,22 @@
         </thead>
         <tbody>
             <?php if ($usersList) {
-                foreach ($usersList as $user) {
-                    if ($user->id != user_id()) {
-                     ?>
+                foreach ($usersList as $user) { ?>
+                    
                         <tr>
                             <td class="text-bold-500"><?php echo $user->nom; ?></td>
                             <td><?php echo $user->prenom; ?></td>
                             <td class="text-bold-500"><?php echo $user->email; ?></td>
                             <td class="text-bold-500"><?php echo $user->username; ?></td>
+                        <?php    
+                            if ($user->id != user_id()) {
+                        ?>
                             <td>
                                 <?php if ($results) { ?>
                                     <fieldset class="form-group">
                                         <select class="form-select" id="basicSelect" onchange="location = this.value;">
                                             <?php foreach ($results as $result) { ?>
-                                                <option value="<?php echo base_url('/newuser/updaterole/' . $user->id . '/' . $result->id); ?>" <?php  if ($user->name == $result->name) { ?> selected <?php } ?>><?php echo $result->name; ?></option>
+                                                <option value="<?php echo base_url('/Configuration/Utilisateurs/' . $user->id . '/' . $result->id); ?>" <?php  if ($user->name == $result->name) { ?> selected <?php } ?>><?php echo $result->name; ?></option>
                                             <?php } ?>
                                         </select>
                                     </fieldset>
@@ -49,7 +51,12 @@
                             </td>
                         </tr>
                     <?php
-                    }
+                    }else{
+                    ?>
+                        <td><?php echo $user->name; ?></td>
+                        <td><?php echo $user->stnom; ?></td>
+                        <td></td>
+                    <?php } 
                 }
             }
             ?>

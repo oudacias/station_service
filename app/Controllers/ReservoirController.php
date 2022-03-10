@@ -14,11 +14,15 @@ class ReservoirController extends BaseController
     {
         $station = new Station($db);
         
-        $query = $db->query("SELECT station_id from user_infos where user_id =".user_id());
-        $station_id = $query->getRow()->station_id;
+        if(isset($_SESSION['station_id'])){
+            $station_id = $_SESSION['station_id'];
+        }else{
+            $query = $db->query("SELECT station_id from user_infos where user_id =".user_id());
+            $station_id = $query->getRow()->station_id;
+        }
 
-        if (in_groups(['admin_central'])){
-            $stations = $station->findAll();
+        if (in_groups(['admin'])){
+            $stations = $station->orderBy('nom', 'asc')->findAll();
         }else{ 
             $stations = $station->where('id',$station_id)->findAll();
         }

@@ -1,6 +1,7 @@
 <?= $this->extend('mazer/layouts/vertical-navbar1') ?>
 
 <?= $this->section('content') ?>
+
 <div class="page-heading">
     <section class="section">
         <div class="card">
@@ -26,7 +27,7 @@
                             <h4 class="modal-title" id="myModalLabel33">Nouveau Client</h4>
                             <button type="button" class="close" data-bs-dismiss="modal"
                                 aria-label="Close">
-                                <i data-feather="x"></i>
+                                <i data-feather="x">x</i>
                             </button>
                         </div>
                         <form method="post" action=<?php echo site_url('Clients') ?>>
@@ -43,10 +44,14 @@
                                         <?php } ?>
                                     </select>
                                 </fieldset>
-                                <!-- <label>Plafond</label>
+                                <label>Plafond</label>
                                 <div class="form-group">
                                     <input type="number" name="plafond" class="form-control">
-                                </div> -->
+                                </div>
+                                <label>Solde avant bloquage</label>
+                                <div class="form-group">
+                                    <input type="number" name="solde_libre" class="form-control">
+                                </div>
                             </div>
                             <div class="col-12 d-flex justify-content-center">
                                 <div class="modal-footer ">
@@ -77,9 +82,12 @@
                                             <thead>
                                                 <tr>
                                                     <th>NOM</th>
-                                                    <!-- <th>PLAFOND</th>
-                                                    <th>SOLDE</th>
-                                                    <th>RELIQUAT</th> -->
+                                                    <th>Cumul</th>
+                                                    <th>PLAFOND</th>
+
+                                                    <th>Solde Avant Bloquage</th>
+
+                                                    <th>DÉ / BLOQUER Solde</th>
                                                     <th>Station</th>
                                                     <th>Historique</th>
                                                     <th>ACTIF</th>
@@ -92,14 +100,21 @@
                                                 ?>
                                                 <tr>
                                                     <td class="text-bold-500"><?php echo $client->nom;?></td>
-                                                    <!-- <td><?php //echo $client['plafond'];?></td> -->
-                                                    <!-- <td class="text-bold-500"><?php //echo $client['solde'];?></td> -->
+                                                    <td class="text-bold-500"><?php echo $client->cumul;?></td>
+                                                    <td><?php echo $client->plafond;?></td>
+                                                    <td class="text-bold-500"><?php echo $client->solde_libre; ?></td>
+                                                    <?php if($client->solde_libre_actif == 1) { ?>                                
+                                                            <td><i id="block_id<?php echo $client->id ?>" onclick="ban(<?php echo $client->id?>)" class="fas fa-user-lock"></i></td>
+                                                        <?php }else{ ?>
+                                                            <td><i id="block_id<?php echo $client->id ?>" onclick="ban(<?php echo $client->id?>)" class="fa-solid fa-unlock-keyhole"></i></td>
+
+                                                        <?php } ?>
                                                     <!-- <td><?php //echo $client['reliquat'];?></td> -->
                                                     <td><?php echo $client->station_nom;?></td>
                                                     <td><a href="/Configuration/Clients/Historique/<?php echo $client->client_id;?>"><i class="far fa-file-alt"></i></a></td>
                                                     <td><?php if($client->actif == 1) { ?>                                
-                                                        <span id="actif<?php echo $client->id ?>" class="badge bg-success">Actif</span>
-                                                        <td><i id="ban_id<?php echo $client->id ?>" onclick="ban(<?php echo $client->id?>)" class="fas fa-ban"></i></td>
+                                                            <span id="actif<?php echo $client->id ?>" class="badge bg-success">Actif</span>
+                                                            <td><i id="ban_id<?php echo $client->id ?>" onclick="ban(<?php echo $client->id?>)" class="fas fa-ban"></i></td>
                                                         <?php }else{ ?>
                                                             <span id="actif<?php echo $client->id ?>" class="badge bg-danger">Bloqué</span>
                                                             <td><i id="ban_id<?php echo $client->id ?>" onclick="ban(<?php echo $client->id?>)" class="fas fa-check-circle"></i></td>
@@ -157,6 +172,33 @@
                     $("#actif"+id).text(text);
                 }
             });
+            return false;
+        }
+    function block(id,ban){
+            var actif = 0;
+            var className = $("#block_id"+id).attr("class");
+
+            if(className == 'fas fa-user-lock'){
+                actif = 1;
+                text = "Actif"
+                $("#ban_id"+id).toggleClass("fa-check-circle fa-ban");
+                $("#actif"+id).toggleClass("bg-success bg-danger");
+            }else if(className == 'fas fa-ban'){
+                $("#ban_id"+id).toggleClass("fa-ban fa-check-circle");
+                $("#actif"+id).toggleClass("bg-danger bg-success");
+            }
+            var client_id = id;
+            // $.ajax({
+            //     type : "POST",
+            //     url  : "<?php echo site_url('/activateSolde')?>",
+            //     dataType : "JSON",
+            //     data : {client_id:client_id , actif:actif},
+            //     success: function(data){
+            //         // $("#actif"+id).toggleClass( "bg-success", "bg-danger" );
+            //         // $("#actif"+id).toggleText('Initial', 'Secondary');
+            //         $("#actif"+id).text(text);
+            //     }
+            // });
             return false;
         }
  
